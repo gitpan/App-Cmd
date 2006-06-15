@@ -9,13 +9,13 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
- $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd.pm 22432 2006-06-13T01:56:37.727054Z rjbs  $
+ $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd.pm 22529 2006-06-15T12:27:14.040068Z rjbs  $
 
 =cut
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 =head1 SYNOPSIS
 
@@ -269,7 +269,7 @@ Copyright 2005-2006, (code (simply)).  All rights reserved;  App::Cmd and
 bundled code are free software, released under the same terms as perl itself.
 
 App:Cmd was originally written as Rubric::CLI by Ricardo SIGNES in 2005.  It
-was refactored extensively by Ricardo SIGNES and John Capiello and released as
+was refactored extensively by Ricardo SIGNES and John Cappiello and released as
 App::Cmd in 2006.
 
 =cut
