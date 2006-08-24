@@ -114,6 +114,67 @@ The first two methods provide configuration passed to GLD's C<describe_options> 
     die $self->usage->text unless @$args;
   }
 
+=head1 TIPS
+
+=over 4
+
+=item *
+
+Delay using large modules using L<autouse>, L<Class::Autouse> or C<require> in
+your commands to save memory and make startup faster. Since only one of these
+commands will be run anyway, there's no need to preload the requirements for
+all of them.
+
+=item *
+
+To add a C<--help> option to all your commands create a base class like:
+
+  package MyBaseCmd;
+  use base qw/App::Cmd::Command/;
+
+  sub opt_spec {
+    my ( $class, $app ) = @_;
+    return (
+      [ 'help' => "This usage screen" ],
+      $class->options($app),
+    )
+  }
+
+  sub validate_args {
+    my ( $self, $opt, $args ) = @_;
+    warn $self->usage->text and exit if $opt->{help};
+    $self->validate( $opt, $args );
+  }
+
+Where C<options> and C<validate> are "inner" methods which your command
+subclasses implement.
+
+=item *
+
+To let your users configure default values for options, put a sub like
+
+  sub config {
+    my $app = shift;
+    $app->{config} ||= TheLovelyConfigModule->load_config_file();
+  }
+
+in your main app file, and then do something like:
+
+  sub opt_spec {
+    my ( $class, $app ) = @_;
+    my ( $name ) = $class->command_names;
+    return (
+      [ 'blort=s' => "That special option",
+        { default => $app->config->{$name}{blort} || $fallback_default },
+      ],
+    );
+  }
+
+Or better yet, put this logic in a superclass and process the return value from
+an "inner" method (see previous tip for an exmaple).
+
+=back
+
 =head1 AUTHOR AND COPYRIGHT
 
 Copyright 2005-2006, (code (simply)).  All rights reserved;  App::Cmd and

@@ -1,4 +1,5 @@
 package App::Cmd::Command;
+use base qw/App::Cmd::ArgProcessor/;
 
 =head1 NAME
 
@@ -6,7 +7,7 @@ App::Cmd::Command - a base class for App::Cmd commands
 
 =head1 VERSION
 
- $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd/Command.pm 22432 2006-06-13T01:56:37.727054Z rjbs  $
+ $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd/Command.pm 24994 2006-08-24T04:32:29.796445Z rjbs  $
 
 =cut
 
@@ -26,6 +27,35 @@ This returns a new instance of the command plugin.
 sub new {
   my ($class, $arg) = @_;
   bless $arg => $class;
+}
+
+=head2 prepare
+
+  my ( $cmd, $opt, $args ) = $class->prepare( @args );
+
+Return a command object parse the command line options, arguments, etc.
+
+=cut
+
+sub prepare {
+  my ( $class, $app, @args ) = @_;
+
+  my ($opt, $args, %fields) = $class->_process_args( \@args, $class->_option_processing_params($app) );
+
+  return (
+    $class->new({ app => $app, %fields }),
+    $opt,
+    @$args,
+  );
+}
+
+sub _option_processing_params {
+  my ( $class, @args ) = @_;
+
+  return (
+    $class->usage_desc(@args),
+    $class->opt_spec(@args),
+  );
 }
 
 =head2 run
@@ -123,6 +153,25 @@ continue.
 
 sub validate_args {}
 
+=head2 usage_error
+
+  $self->usage_error("Your mother!");
+
+Used to die with nice usage output, durinv C<validate_args>.
+
+=cut
+
+sub usage_error {
+  my ( $self, $error ) = @_;
+  die "$error\n\nUsage:\n\n" . $self->_usage_text;
+}
+
+sub _usage_text {
+  my $self = shift;
+  local $@;
+  join("\n\n", eval { $self->app->_usage_text }, eval { $self->usage->text } );
+}
+
 =head2 abstract
 
 This method returns a short description of the command's purpose.  If this
@@ -143,6 +192,7 @@ sub abstract {
   $pm_file = $INC{$pm_file};
   open my $fh, "<", $pm_file or return "(unknown)";
 
+  local $_;
   local $/ = "\n";
   my $inpod = 0;
   while (<$fh>) {

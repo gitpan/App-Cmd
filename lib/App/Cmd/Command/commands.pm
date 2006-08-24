@@ -6,12 +6,14 @@ App::Cmd::Command::commands - list the application's commands
 
 =head1 VERSION
 
- $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd/Command/commands.pm 22405 2006-06-12T03:49:56.576791Z rjbs  $
+ $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd/Command/commands.pm 24994 2006-08-24T04:32:29.796445Z rjbs  $
 
 =head1 DESCRIPTION
 
 This command plugin implements a "commands" command.  This command will list
 all of an App::Cmd's commands and their abstracts.
+
+=head1 METHODS
 
 =cut
 
@@ -20,17 +22,56 @@ use warnings;
 
 use base qw(App::Cmd::Command);
 
+=head2 C<run>
+
+List the app's commands.
+
+=cut
+
 sub run {
   my ($self) = @_;
 
+  local $@;
+  eval { print $self->app->_usage_text . "\n" };
+
+  print "Available commands:\n\n";
+
   my @primary_commands =
-    map { my ($n) = $_->command_names; $n } 
+    map { ($_->command_names)[0] } 
     $self->app->command_plugins;
 
-  for my $command (sort @primary_commands) {
-    my $abstract = $self->app->plugin_for($command)->abstract;
-    printf "%10s: %s\n", $command, $abstract;
+  my @cmd_groups = $self->sort_commands( @primary_commands );
+
+  my $fmt_width = 0;
+  for (@primary_commands) { $fmt_width = length if length > $fmt_width }
+  $fmt_width += 2; # pretty
+
+  foreach my $cmd_set ( @cmd_groups ) {
+    for my $command (@$cmd_set) {
+      my $abstract = $self->app->plugin_for($command)->abstract;
+      printf "%${fmt_width}s: %s\n", $command, $abstract;
+    }
+    print "\n";
   }
+}
+
+=head2 C<sort_commands>
+
+  my @sorted = $cmd->sort_commands( @unsorted );
+
+Orders the list of commands so that 'help' and 'commands' show up at the top.
+
+=cut
+
+sub sort_commands {
+  my ( $self, @commands ) = @_;
+
+  my $float = qr/^(?:help|commands)$/;
+
+  my @head = sort grep { $_ =~ $float } @commands;
+  my @tail = sort grep { $_ !~ $float } @commands;
+
+  return ( \@head, \@tail );
 }
 
 1;

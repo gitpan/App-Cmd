@@ -1,4 +1,5 @@
 package App::Cmd;
+use base qw/App::Cmd::ArgProcessor/;
 
 use strict;
 use warnings;
@@ -9,13 +10,13 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.002
+version 0.005
 
- $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd.pm 22529 2006-06-15T12:27:14.040068Z rjbs  $
+ $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd.pm 24996 2006-08-24T04:49:55.205237Z rjbs  $
 
 =cut
 
-our $VERSION = '0.002';
+our $VERSION = '0.005';
 
 =head1 SYNOPSIS
 
@@ -75,7 +76,6 @@ For information on how to start using App::Cmd, see App::Cmd::Tutorial.
 
 =cut
 
-use Getopt::Long::Descriptive ();
 use Module::Pluggable::Object ();
 
 =head1 METHODS
@@ -91,6 +91,9 @@ Valid arguments are:
 
   no_commands_plugin - if true, the command list plugin is not added
 
+  plugin_search_path - The path to search for commands in. Defaults to
+                       "YourClass::Command"
+
 If C<no_commands_plugin> is not given, App::Cmd::Command::commands will be
 required, and it will be registered to handle all of its command names not
 handled by other plugins.
@@ -105,23 +108,77 @@ sub new {
   bless $self => $class;
 }
 
+=head2 C< plugin_search_path >
+
+Returns the plugin_search_path as set.
+
+This is a method because it's fun to override it with
+
+  use constant plugin_search_path => __PACKAGE__;
+
+and stuff.
+
+=cut
+
+sub plugin_search_path {
+  my $self = shift;
+  my $class = ref $self || $self;
+  my $default = "$class\::Command";
+
+  if ( ref $self ) {
+    return $self->{plugin_search_path} ||= $default;
+  } else {
+    return $default;
+  }
+}
+
+sub _module_pluggable_options {
+  my $self = shift;
+  return ();
+}
+
+=head2 set_global_options
+
+  $app->set_global_options( { } );
+
+This is a separate method because it's more of a hook than an accessor.
+
+=cut
+
+sub set_global_options {
+  my ( $self, $opt ) = @_;
+  return $self->{global_options} = $opt;
+}
+
+=head2 global_options
+
+  if ( $cmd->app->global_options->{verbose} ) { ... }
+
+This field contains the global options.
+
+=cut
+
+sub global_options {
+	my $self = shift;
+	return $self->{global_options} ||={} if ref($self);
+  return {};
+}
+ 
 sub _command {
   my ($self, $arg) = @_;
 
   return $self->{command} if (ref($self) and $self->{command});
 
-  my $class = ref $self ? ref $self : $self;
 
   my $finder = Module::Pluggable::Object->new(
-    search_path => "$class\::Command",
+    search_path => $self->plugin_search_path(),
+    $self->_module_pluggable_options(),
   );
 
   my %plugin;
   for my $plugin ($finder->plugins) {
     eval "require $plugin" or die "couldn't load $plugin: $@";
-    for ($plugin->command_names) {
-      my $command = lc $_;
-
+    foreach my $command ( map { lc } $plugin->command_names) {
       die "two plugins for command $command: $plugin and $plugin{$command}\n"
         if exists $plugin{$command};
 
@@ -131,6 +188,16 @@ sub _command {
 
   unless ($arg->{no_commands_plugin}) {
     my $plugin = 'App::Cmd::Command::commands';
+    eval "require $plugin" or die "couldn't load $plugin: $@";
+    for ($plugin->command_names) {
+      my $command = lc $_;
+
+      $plugin{$command} = $plugin unless exists $plugin{$command};
+    }
+  }
+
+  unless ($arg->{no_help_plugin}) {
+    my $plugin = 'App::Cmd::Command::help';
     eval "require $plugin" or die "couldn't load $plugin: $@";
     for ($plugin->command_names) {
       my $command = lc $_;
@@ -187,15 +254,77 @@ sub plugin_for {
   return $plugin;
 }
 
-# This method returns the command to handle.  It should probably be public so
-# it can be subclassed for great justice. -- rjbs, 2006-06-11
-sub _get_command {
-  my ($self) = @_;
+=head2 get_command
 
-  my $command = shift @ARGV;
-     $command = 'commands' unless defined $command;
+  my ( $command_name, $opt, $args ) = $app->get_command( @args );
 
-  return $command;
+Process arguments and into a command name and [optional] global options.
+
+=cut
+
+sub get_command {
+  my ($self, @args) = @_;
+
+  my ( $opt, $args, %fields ) = $self->_process_args( \@args, $self->_global_option_processing_params );
+
+  my ( $command, @rest ) = @$args;
+
+  $self->{usage} = $fields{usage};
+
+  return ( $command, $opt, @rest );
+}
+
+# FIXME cleanup
+
+=head2 C< usage >
+
+  print $self->app->usage->text;
+
+Returns the usage object for the global options.
+
+=cut
+
+sub usage { $_[0]{usage} };
+
+sub _usage_text {
+  my $self = shift;
+  local $@;
+  join("\n\n", eval { $self->app->_usage_text }, eval { $self->usage->text } );
+}
+
+sub _global_option_processing_params {
+  my ( $self, @args ) = @_;
+
+  return (
+    $self->usage_desc(@args),
+    $self->global_opt_spec(@args),
+    { getopt_conf => [qw/pass_through/] },
+  );
+}
+
+=head2 C< usage_desc >
+
+The top level usage line. Looks something like
+
+  "yourapp [options] <command>"
+
+=cut
+
+sub usage_desc {
+  my $self = shift;
+  return "%c %o <command>";
+}
+
+=head2 C< global_opt_spec >
+
+Returns an empty list. Can be overridden for pre-dispatch option processing.
+This is useful for flags like --verbose.
+
+=cut
+
+sub global_opt_spec {
+  my $self = shift;
+  return ();
 }
 
 =head2 C< run >
@@ -217,30 +346,96 @@ sub run {
   # We should probably use Class::Default.
   $self = $self->new unless ref $self;
 
+  # 1. prepare the command object
+  my ( $cmd, $opt, @args ) = $self->prepare_command( @ARGV );
+   
+  # 2. call plugin's run method, pass in opts
+  $self->execute_command( $cmd, $opt, @args );
+}
+
+=head2 C<execute_command>
+
+  $app->execute_command( $cmd, $opt, $args );
+
+This method will invoke C<validate_args> and then C<run> on C<$cmd>.
+
+=cut
+
+sub execute_command {
+  my ( $self, $cmd, $opt, @args ) = @_;
+
+  $cmd->validate_args($opt, \@args);
+
+  $cmd->run($opt, \@args);
+}
+
+=head2 C<prepare_command>
+
+  my ( $cmd, $opt, $args ) = $app->execute_command( @ARGV );
+
+This method will parse the subcommand, load the plugin for it, use it to parse
+the command line options, and eventually return everything necessary to
+actually execute the command.
+
+=cut
+
+sub prepare_command {
+  my ($self, @args) = @_;
+
   # 1. figure out first-level dispatch
-  my $command = $self->_get_command;
+  my ( $command, $opt, @sub_args ) = $self->get_command( @args );
+
+  $self->set_global_options( $opt );
 
   # 2. find its plugin
   #    or else call default plugin
   #    which is help by default..?
-  my $plugin = $self->plugin_for($command);
-     $plugin = $self->plugin_for('commands') unless $command;
 
-  # 3. use GLD with plugin's usage_desc and opt_spec
-  #    this stores the $usage object in the current object
-  my ($opt, $usage) = Getopt::Long::Descriptive::describe_options(
-    $plugin->usage_desc,
-    $plugin->opt_spec,
-  );
+  if ( defined($command) ) {
+    $self->_prepare_command( $command, $opt, @sub_args );
+  } else {
+    return $self->prepare_default_command( $opt, @sub_args );
+  }
+}
 
-  my $args = [ @ARGV ];
+sub _prepare_command {
+  my ( $self, $command, $opt, @args ) = @_;
+  if ( my $plugin = $self->plugin_for($command) ) {
+    $self->_plugin_prepare( $plugin, @args );
+  } else {
+    return $self->_bad_command($command, $opt, @args);
+  }
+}
 
-  # 4. call plugin's run method, pass in opts
-  my $cmd = $plugin->new({ app => $self, usage => $usage });
+sub _plugin_prepare {
+  my ( $self, $plugin, @args ) = @_;
+  return $plugin->prepare( $self, @args );
+}
 
-  $cmd->validate_args($opt, $args);
+sub _bad_command {
+  my ( $self, $command, $opt, @args ) = @_;
+  print "Unrecognized command: $command.\n\nUsage:\n\n" if defined($command);
+  our $_bad++; END { exit 1 if $_bad };
+  $self->execute_command( $self->prepare_command("commands") );
+  exit 1;
+}
 
-  $cmd->run($opt, $args);
+sub prepare_default_command {
+  my $self = shift;
+  $self->prepare_command("commands");
+}
+
+=head2 usage_error
+
+  $self->usage_error("Your mother!");
+
+Used to die with nice usage output, durinv C<validate_args>.
+
+=cut
+
+sub usage_error {
+  my ( $self, $error ) = @_;
+  die "$error\n\nUsage:\n\n" . $self->_usage_text;
 }
 
 =head1 TODO
@@ -270,7 +465,8 @@ bundled code are free software, released under the same terms as perl itself.
 
 App:Cmd was originally written as Rubric::CLI by Ricardo SIGNES in 2005.  It
 was refactored extensively by Ricardo SIGNES and John Cappiello and released as
-App::Cmd in 2006.
+App::Cmd in 2006.  Yuval Kogman performed significant refactoring and
+other improvements on the code.
 
 =cut
 
