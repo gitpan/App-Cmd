@@ -10,4 +10,4 @@ no_index:
 requires: 
   Getopt::Long::Descriptive: 0.06
   Module::Pluggable::Object: 0
-version: 0.006
+version: 0.007

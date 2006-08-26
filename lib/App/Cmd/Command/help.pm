@@ -6,7 +6,7 @@ App::Cmd::Command::help - display a command's help screen
 
 =head1 VERSION
 
- $Id: /mirror/rjbs/app-cmd/trunk/lib/App/Cmd/Command/commands.pm 27059 2006-06-12T03:50:29.417621Z rjbs  $
+ $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd/Command/help.pm 25152 2006-08-25T23:34:47.955138Z rjbs  $
 
 =head1 DESCRIPTION
 
@@ -26,24 +26,27 @@ sub command_names { qw/help --help -h -?/ }
 sub run {
   my ($self, $opts, $args) = @_;
 
-  if ( !@$args ) {
+  if (!@$args) {
     my $usage = $self->app->usage->text;
     my $command = $0;
 
-    my $opt_descriptor_chars = qr/[\[\]<>\(\)]/; # chars normally used to describe options
-    if ( $usage =~ /^(.+?) \s* (?: $opt_descriptor_chars | $ )/x ) { # try to match subdispatchers too
+    # chars normally used to describe options
+    my $opt_descriptor_chars = qr/[\[\]<>\(\)]/;
+
+    if ($usage =~ /^(.+?) \s* (?: $opt_descriptor_chars | $ )/x) {
+      # try to match subdispatchers too
       $command = $1;
     }
     
     # evil hack ;-)
-    $self->app->{usage} = bless sub { return "$command help <command>\n" }, "Getopt::Long::Descriptive::Usage";
+    bless
+      $self->app->{usage} = sub { return "$command help <command>\n" }
+      => "Getopt::Long::Descriptive::Usage";
 
     $self->app->execute_command( $self->app->_prepare_command("commands") );
-    exit;
   } else {
-    my ( $cmd, $opt, $args) = $self->app->prepare_command(@$args);
+    my ($cmd, $opt, $args) = $self->app->prepare_command(@$args);
     print $cmd->_usage_text;
-    exit;
   }
 }
 

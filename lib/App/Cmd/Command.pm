@@ -7,7 +7,7 @@ App::Cmd::Command - a base class for App::Cmd commands
 
 =head1 VERSION
 
- $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd/Command.pm 24994 2006-08-24T04:32:29.796445Z rjbs  $
+ $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd/Command.pm 25151 2006-08-25T23:17:04.510770Z rjbs  $
 
 =cut
 
@@ -18,29 +18,25 @@ use Carp ();
 
 =head1 METHODS
 
-=head2 new
-
-This returns a new instance of the command plugin.
-
-=cut
-
-sub new {
-  my ($class, $arg) = @_;
-  bless $arg => $class;
-}
-
 =head2 prepare
 
-  my ( $cmd, $opt, $args ) = $class->prepare( @args );
+  my ($cmd, $opt, $args) = $class->prepare($app, @args);
 
-Return a command object parse the command line options, arguments, etc.
+This method is the primary way in which App::Cmd::Command objects are built.
+Given the remaining command line arguments meant for the command, it returns
+the Command object, parsed options (as a hashref), and remaining arguments (as
+an arrayref).
+
+In the usage above, C<$app> is the App::Cmd object that is invoking the
+command.
 
 =cut
 
 sub prepare {
-  my ( $class, $app, @args ) = @_;
+  my ($class, $app, @args) = @_;
 
-  my ($opt, $args, %fields) = $class->_process_args( \@args, $class->_option_processing_params($app) );
+  my ($opt, $args, %fields)
+    = $class->_process_args(\@args, $class->_option_processing_params($app));
 
   return (
     $class->new({ app => $app, %fields }),
@@ -50,13 +46,26 @@ sub prepare {
 }
 
 sub _option_processing_params {
-  my ( $class, @args ) = @_;
+  my ($class, @args) = @_;
 
   return (
     $class->usage_desc(@args),
     $class->opt_spec(@args),
   );
 }
+
+=head2 new
+
+This returns a new instance of the command plugin.  Probably only C<prepare>
+should use this.
+
+=cut
+
+sub new {
+  my ($class, $arg) = @_;
+  bless $arg => $class;
+}
+
 
 =head2 run
 
@@ -120,10 +129,8 @@ the result of the C<command_names> method.
 sub usage_desc {
   my ($self) = @_;
 
-  my ($app) = $0 =~ m{([^/]+)$};
-  $app = 'COMMAND' unless defined $app;
   my ($command) = $self->command_names;
-  return "$app $command %o"
+  return "%c $command %o"
 }
 
 =head2 opt_spec
@@ -146,18 +153,19 @@ sub opt_spec {
 
 This method is passed a hashref of command line options (as processed by
 Getopt::Long::Descriptive) and an arrayref of leftover arguments.  It may throw
-an exception if they are invalid, or may do nothing to allow processing to
-continue.
+an exception (preferably by calling C<usage_error>, below) if they are invalid,
+or it may do nothing to allow processing to continue.
 
 =cut
 
-sub validate_args {}
+sub validate_args { }
 
 =head2 usage_error
 
   $self->usage_error("Your mother!");
 
-Used to die with nice usage output, durinv C<validate_args>.
+This method should be called to die with human-friendly usage output, during
+C<validate_args>.
 
 =cut
 
@@ -167,7 +175,7 @@ sub usage_error {
 }
 
 sub _usage_text {
-  my $self = shift;
+  my ($self) = @_;
   local $@;
   join("\n\n", eval { $self->app->_usage_text }, eval { $self->usage->text } );
 }
@@ -192,17 +200,17 @@ sub abstract {
   $pm_file = $INC{$pm_file};
   open my $fh, "<", $pm_file or return "(unknown)";
 
-  local $_;
   local $/ = "\n";
-  my $inpod = 0;
-  while (<$fh>) {
-    $inpod = /^=(?!cut)/ ? 1
+  my $inpod;
+
+  while (local $_ = <$fh>) {
+    $inpod = /^=(?!cut)/ ? !$inpod # =cut toggles, it doesn't end :-/
            : /^=cut/     ? 0
            :               $inpod;
     next unless $inpod;
     chomp;
-    next unless /^($class\s-\s)(.*)/;
-    $result = $2;
+    next unless /^(?:$class\s-\s)(.*)/;
+    $result = $1;
     last;
   }
   return $result || "(unknown)";
