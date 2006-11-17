@@ -1,6 +1,6 @@
 author: Ricardo SIGNES <rjbs@cpan.org>
 distribution_type: module
-generated_by: Module::Install version 0.63
+generated_by: Module::Install version 0.64
 license: perl
 name: App-Cmd
 no_index: 
@@ -10,4 +10,4 @@ no_index:
 requires: 
   Getopt::Long::Descriptive: 0.06
   Module::Pluggable::Object: 0
-version: 0.007
+version: 0.008

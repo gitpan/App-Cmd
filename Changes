@@ -1,4 +1,8 @@
 
+0.008    2006-11-16
+         documentation fixes
+         perl-critic tests
+
 0.007    2006-08-25
          documentation improvements
          refactoring and reordering of code

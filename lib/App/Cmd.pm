@@ -12,13 +12,13 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
- $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd.pm 25165 2006-08-26T01:30:02.849632Z rjbs  $
+ $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd.pm 28012 2006-11-14T22:31:48.667796Z rjbs  $
 
 =cut
 
-our $VERSION = '0.007';
+our $VERSION = '0.008';
 
 =head1 SYNOPSIS
 
@@ -51,7 +51,7 @@ in F<YourApp/Cmd/Command/blort.pm>:
     my ($self, $opt, $args) = @_;
 
     # no args allowed but options!
-    die $self->usage->text if @$args;
+    $self->usage_error("No args allowed") if @$args;
   }
 
   sub run {
@@ -198,7 +198,7 @@ sub run {
 
 =head2 prepare_command
 
-  my ($cmd, $opt, $args) = $app->execute_command(@ARGV);
+  my ($cmd, $opt, @args) = $app->prepare_command(@ARGV);
 
 This method will load the plugin for the requested command, use its options to
 parse the command line arguments, and eventually return everything necessary to
@@ -266,7 +266,7 @@ sub default_command {
 
 =head2 execute_command
 
-  $app->execute_command($cmd, $opt, $args);
+  $app->execute_command($cmd, \%opt, @args);
 
 This method will invoke C<validate_args> and then C<run> on C<$cmd>.
 
@@ -377,7 +377,7 @@ sub plugin_for {
 
 =head2 get_command
 
-  my ($command_name, $opt, $args) = $app->get_command(@args);
+  my ($command_name, $opt, @args) = $app->get_command(@args);
 
 Process arguments and into a command name and (optional) global options.
 
