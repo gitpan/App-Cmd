@@ -1,5 +1,9 @@
+use strict;
+use warnings;
+
 package App::Cmd::Subdispatch::DashedStyle;
-use base qw/App::Cmd::Subdispatch/;
+use App::Cmd::Subdispatch;
+BEGIN { our @ISA = 'App::Cmd::Subdispatch' };
 
 =head1 NAME
 
@@ -7,12 +11,11 @@ App::Cmd::Subdispatch::DashedStyle - "app cmd --subcmd" style subdispatching
 
 =head1 VERSION
 
-  $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd/Subdispatch/DashedStyle.pm 28012 2006-11-14T22:31:48.667796Z rjbs  $
+version 0.009
 
 =cut
 
-use strict;
-use warnings;
+our $VERSION = '0.009';
 
 =head1 METHODS
 

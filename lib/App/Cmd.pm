@@ -1,8 +1,9 @@
-package App::Cmd;
-use base qw/App::Cmd::ArgProcessor/;
-
 use strict;
 use warnings;
+
+package App::Cmd;
+use App::Cmd::ArgProcessor;
+BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
 
 use Module::Pluggable::Object ();
 
@@ -12,13 +13,11 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.008
-
- $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd.pm 28012 2006-11-14T22:31:48.667796Z rjbs  $
+version 0.009
 
 =cut
 
-our $VERSION = '0.008';
+our $VERSION = '0.009';
 
 =head1 SYNOPSIS
 
@@ -234,7 +233,7 @@ sub _prepare_command {
 
 sub _prepare_default_command {
   my ($self, $opt, @sub_args) = @_;
-  $self->_prepare_command($self->default_plugin, $opt, @sub_args);
+  $self->_prepare_command($self->default_command, $opt, @sub_args);
 }
 
 sub _plugin_prepare {
@@ -248,10 +247,12 @@ sub _bad_command {
 
   # This should be class data so that, in Bizarro World, two App::Cmds will not
   # conflict.
-  our $_bad++; END { exit 1 if $_bad };
+  our $_bad++;
   $self->execute_command($self->prepare_command("commands"));
   exit 1;
 }
+
+END { exit 1 if our $_bad };
 
 =head2 default_command
 
@@ -263,6 +264,8 @@ command line.  The default default is "help"
 sub default_command {
   "help"
 }
+
+sub default_plugin { shift->default_command(@_) }
 
 =head2 execute_command
 

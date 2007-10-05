@@ -1,3 +1,6 @@
+use strict;
+use warnings;
+
 package App::Cmd::ArgProcessor;
 
 =head1 NAME
@@ -6,12 +9,11 @@ App::Cmd::ArgProcessor - App::Cmd-specific wrapper for Getopt::Long::Descriptive
 
 =head1 VERSION
 
- $Id: /my/cs/projects/app-cmd/trunk/lib/App/Cmd/ArgProcessor.pm 28012 2006-11-14T22:31:48.667796Z rjbs  $
+version 0.009
 
 =cut
 
-use strict;
-use warnings;
+our $VERSION = '0.009';
 
 sub _process_args {
   my ($class, $args, @params) = @_;
