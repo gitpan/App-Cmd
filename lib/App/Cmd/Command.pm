@@ -11,11 +11,11 @@ App::Cmd::Command - a base class for App::Cmd commands
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =cut
 
-our $VERSION = '0.009';
+our $VERSION = '0.010';
 
 use Carp ();
 
@@ -68,7 +68,6 @@ sub new {
   my ($class, $arg) = @_;
   bless $arg => $class;
 }
-
 
 =head2 run
 
@@ -174,13 +173,13 @@ C<validate_args>.
 
 sub usage_error {
   my ( $self, $error ) = @_;
-  die "$error\n\nUsage:\n\n" . $self->_usage_text;
+  die "Error: $error\nUsage: " . $self->_usage_text;
 }
 
 sub _usage_text {
   my ($self) = @_;
   local $@;
-  join("\n\n", eval { $self->app->_usage_text }, eval { $self->usage->text } );
+  join "\n", eval { $self->app->_usage_text }, eval { $self->usage->text };
 }
 
 =head2 abstract
