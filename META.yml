@@ -1,7 +1,8 @@
 --- 
-author: Ricardo SIGNES <rjbs@cpan.org>
+author: 
+  - Ricardo SIGNES <rjbs@cpan.org>
 distribution_type: module
-generated_by: Module::Install version 0.67
+generated_by: Module::Install version 0.68
 license: perl
 meta-spec: 
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
@@ -15,4 +16,4 @@ requires:
   Getopt::Long::Descriptive: 0.06
   Module::Pluggable::Object: 0
   Sub::Install: 0
-version: 0.011
+version: 0.012
