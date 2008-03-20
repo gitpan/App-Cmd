@@ -5,6 +5,7 @@ package App::Cmd;
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
 
+use File::Basename ();
 use Module::Pluggable::Object ();
 
 =head1 NAME
@@ -13,11 +14,11 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.012
+version 0.013
 
 =cut
 
-our $VERSION = '0.012';
+our $VERSION = '0.013';
 
 =head1 SYNOPSIS
 
@@ -109,7 +110,14 @@ C<default_command> method.
 sub new {
   my ($class, $arg) = @_;
 
-  my $self = { command => $class->_command($arg) };
+  my $arg0 = $0;
+  my $base = File::Basename::basename $arg0;
+
+  my $self = {
+    command   => $class->_command($arg),
+    arg0      => $base,
+    full_arg0 => $arg0,
+  };
   
   bless $self => $class;
 }
@@ -207,6 +215,31 @@ sub run {
   # ...and then run it
   $self->execute_command($cmd, $opt, @args);
 }
+
+=head2 arg0
+
+=head2 full_arg0
+
+  my $program_name = $app->arg0;
+
+  my $full_program_name = $app->full_arg0;
+
+These methods return the name of the program invoked to run this application.
+This is determined by inspecting C<$0> when the App::Cmd object is
+instantiated, so it's probably correct, but doing weird things with App::Cmd
+could lead to weird values from these methods.
+
+If the program was run like this:
+
+  knight!rjbs$ ~/bin/rpg dice 3d6
+
+Then the methods return:
+
+  arg0      - rpg
+  full_arg0 - /Users/rjbs/bin/rpg
+
+These values are captured when the App::Cmd object is created, so it is safe to
+assign to C<$0> later.
 
 =head2 prepare_command
 
@@ -481,21 +514,13 @@ sub _usage_text {
 
 =head1 TODO
 
-Lots of stuff!  This list isn't close to complete yet, I'm still adding to it.
-
 =over
-
-=item * improve the tutorial
 
 =item * publish and bring in Log::Speak (simple quiet/verbose output)
 
 =item * publish and use our internal enhanced describe_options
 
 =item * publish and use our improved simple input routines
-
-=item * publish and use our remaining little CLI tools
-
-=item * make it simple to write a command with no subcommands
 
 =back
 
