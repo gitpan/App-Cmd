@@ -11,11 +11,11 @@ App::Cmd::Subdispatch::DashedStyle - "app cmd --subcmd" style subdispatching
 
 =head1 VERSION
 
-version 0.013
+version 0.014_01
 
 =cut
 
-our $VERSION = '0.013';
+our $VERSION = '0.014_01';
 
 =head1 METHODS
 
@@ -43,6 +43,14 @@ sub get_command {
     return (undef, $opt, @sub_args);
   }
 }
+
+=begin Pod::Coverage
+
+prepare_default_command
+
+=end Pod::Coverage
+
+=cut
 
 sub prepare_default_command {
   my ( $self, $opt, @args ) = @_;

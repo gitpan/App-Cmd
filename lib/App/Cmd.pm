@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use 5.006;
 
 package App::Cmd;
 use App::Cmd::ArgProcessor;
@@ -8,36 +9,66 @@ BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
 use File::Basename ();
 use Module::Pluggable::Object ();
 
+use Sub::Exporter -setup => {
+  collectors => {
+    -command => \'_setup_command',
+    -run     => sub { $_[0]->run },
+  },
+};
+
+sub _setup_command {
+  my ($self, $val, $data) = @_;
+  my $into = $data->{into};
+
+  Carp::confess "App::Cmd -command setup requested for already-setup class"
+    if $into->isa('App::Cmd::Command');
+
+  {
+    my $base = $self->_default_command_base;
+    eval "require $base; 1" or die $@;
+    no strict 'refs';
+    push @{"$into\::ISA"}, $base;
+  }
+
+  $self->_register_command($into);
+
+  for my $plugin ($self->_plugin_plugins) {
+    $plugin->import_from_plugin({ into => $into });
+  }
+
+  1;
+}
+
+sub _plugin_plugins { return }
+
 =head1 NAME
 
 App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.013
+version 0.014_01
 
 =cut
 
-our $VERSION = '0.013';
+our $VERSION = '0.014_01';
 
 =head1 SYNOPSIS
 
 in F<yourcmd>:
 
-  use YourApp::Cmd;
-  
-  Your::Cmd->run;
+  use YourApp -run;
 
-in F<YourApp/Cmd.pm>:
+in F<YourApp.pm>:
 
-  package YourApp::Cmd;
-  use base qw(App::Cmd);
+  package YourApp;
+  use App::Cmd::Setup -app;
   1;
 
-in F<YourApp/Cmd/Command/blort.pm>:
+in F<YourApp/Command/blort.pm>:
 
-  package YourApp::Cmd::Command::blort;
-  use base qw(App::Cmd::Command);
+  package YourApp::Command::blort;
+  use YourApp -command;
   use strict; use warnings;
 
   sub opt_spec {
@@ -132,7 +163,8 @@ sub _command {
 
   my %plugin;
   for my $plugin ($self->_plugins) {
-    eval "require $plugin" or die "couldn't load $plugin: $@";
+    eval "require $plugin" or die "couldn't load $plugin: $@"
+      unless eval { $plugin->isa( $self->_default_command_base ) };
     next unless $plugin->can("command_names");
     foreach my $command (map { lc } $plugin->command_names) {
       die "two plugins for command $command: $plugin and $plugin{$command}\n"
@@ -168,6 +200,15 @@ sub _plugins {
   return @plugins;
 }
 
+sub _register_command {
+  my ($self, $cmd_class) = @_;
+  $self->_plugins;
+
+  my $class = ref $self || $self;
+  push @{ $plugins_for{ $class } }, $cmd_class
+    unless grep { $_ eq $cmd_class } @{ $plugins_for{ $class } };
+}
+
 sub _module_pluggable_options {
   # my ($self) = @_; # no point in creating these ops, just to toss $self
   return;
@@ -185,7 +226,6 @@ sub _load_default_plugin {
     }
   }
 }
-
 
 =head2 run
 
@@ -271,7 +311,7 @@ sub prepare_command {
 sub _prepare_command {
   my ($self, $command, $opt, @args) = @_;
   if (my $plugin = $self->plugin_for($command)) {
-    $self->_plugin_prepare($plugin, @args);
+    return $plugin->prepare($self, @args);
   } else {
     return $self->_bad_command($command, $opt, @args);
   }
@@ -280,11 +320,6 @@ sub _prepare_command {
 sub _prepare_default_command {
   my ($self, $opt, @sub_args) = @_;
   $self->_prepare_command($self->default_command, $opt, @sub_args);
-}
-
-sub _plugin_prepare {
-  my ($self, $plugin, @args) = @_;
-  return $plugin->prepare($self, @args);
 }
 
 sub _bad_command {
@@ -319,8 +354,9 @@ This method will invoke C<validate_args> and then C<run> on C<$cmd>.
 sub execute_command {
   my ($self, $cmd, $opt, @args) = @_;
 
-  $cmd->validate_args($opt, \@args);
+  local our $active_cmd = $cmd;
 
+  $cmd->validate_args($opt, \@args);
   $cmd->run($opt, \@args);
 }
 
@@ -335,15 +371,26 @@ This is a method because it's fun to override it with, for example:
 
 =cut
 
-sub plugin_search_path {
-  my $self = shift;
+sub _default_command_base {
+  my ($self) = @_;
   my $class = ref $self || $self;
-  my $default = "$class\::Command";
+  return "$class\::Command";
+}
+
+sub _default_plugin_base {
+  my ($self) = @_;
+  my $class = ref $self || $self;
+  return "$class\::Plugin";
+}
+
+sub plugin_search_path {
+  my ($self) = @_;
+  my @default = ($self->_default_command_base, $self->_default_plugin_base);
 
   if (ref $self) {
-    return $self->{plugin_search_path} ||= $default;
+    return $self->{plugin_search_path} ||= \@default;
   } else {
-    return $default;
+    return \@default;
   }
 }
 
@@ -524,10 +571,10 @@ sub _usage_text {
 
 =back
 
-=head1 AUTHOR AND COPYRIGHT
+=head1 COPYRIGHT AND AUTHOR 
 
-Copyright 2005-2006, (code (simply)).  All rights reserved;  App::Cmd and
-bundled code are free software, released under the same terms as perl itself.
+Copyright 2005-2006, (code (simply)).  App::Cmd and bundled code are free
+software, released under the same terms as perl itself.
 
 App::Cmd was originally written as Rubric::CLI by Ricardo SIGNES in 2005.  It
 was refactored extensively by Ricardo SIGNES and John Cappiello and released as
