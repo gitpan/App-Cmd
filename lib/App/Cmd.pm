@@ -12,7 +12,7 @@ use Module::Pluggable::Object ();
 use Sub::Exporter -setup => {
   collectors => {
     -command => \'_setup_command',
-    -run     => sub { $_[0]->run },
+    -run     => sub { $_[1]->{class}->run; 1 },
   },
 };
 
@@ -47,11 +47,11 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.014_01
+version 0.014_02
 
 =cut
 
-our $VERSION = '0.014_01';
+our $VERSION = '0.014_02';
 
 =head1 SYNOPSIS
 
@@ -385,7 +385,13 @@ sub _default_plugin_base {
 
 sub plugin_search_path {
   my ($self) = @_;
-  my @default = ($self->_default_command_base, $self->_default_plugin_base);
+
+  my $dcb = $self->_default_command_base;
+  my $ccb = $dcb eq 'App::Cmd::Command'
+          ? $self->App::Cmd::_default_command_base
+          : $self->_default_command_base;
+
+  my @default = ($ccb, $self->_default_plugin_base);
 
   if (ref $self) {
     return $self->{plugin_search_path} ||= \@default;
