@@ -1,21 +1,25 @@
---- 
-author: 
-  - Ricardo SIGNES <rjbs@cpan.org>
+---
+abstract: 'write command line apps with less suffering'
+author:
+  - '-2006, (code (simply)).  App::Cmd and bundled code are free'
 distribution_type: module
-generated_by: Module::Install version 0.69
+generated_by: 'Module::Install version 0.77'
 license: perl
-meta-spec: 
-  url: http://module-build.sourceforge.net/META-spec-v1.3.html
-  version: 1.3
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+module_name: App::Cmd
 name: App-Cmd
-no_index: 
-  directory: 
+no_index:
+  directory:
     - inc
     - t
-requires: 
+requires:
   Getopt::Long::Descriptive: 0.06
   Module::Pluggable::Object: 0
+  Sub::Exporter: 0
   Sub::Install: 0
-version: 0.014_02
-
-
+  perl: 5.6.0
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.200
