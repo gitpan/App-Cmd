@@ -17,9 +17,9 @@ no_index:
 requires:
   Getopt::Long::Descriptive: 0.06
   Module::Pluggable::Object: 0
-  Sub::Exporter: 0
+  Sub::Exporter: 0.975
   Sub::Install: 0
   perl: 5.6.0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.200
+version: 0.201
