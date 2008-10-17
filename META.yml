@@ -2,6 +2,8 @@
 abstract: 'write command line apps with less suffering'
 author:
   - '-2006, (code (simply)).  App::Cmd and bundled code are free'
+build_requires:
+  IO::TieCombine: 1
 distribution_type: module
 generated_by: 'Module::Install version 0.77'
 license: perl
@@ -22,4 +24,4 @@ requires:
   perl: 5.6.0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.201
+version: 0.202
