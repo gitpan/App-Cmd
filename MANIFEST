@@ -47,6 +47,8 @@ t/lib/Test/XyzzyPlugin.pm
 t/setup-inner.t
 t/setup-nocmd.t
 t/setup.t
+t/simple-require.t
+t/simple-use.t
 t/subdispatch.t
 xt/release/perl-critic.t
 xt/release/pod-coverage.t
