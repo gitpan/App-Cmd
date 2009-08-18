@@ -47,11 +47,11 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.204
+version 0.205
 
 =cut
 
-our $VERSION = '0.204';
+our $VERSION = '0.205';
 
 =head1 SYNOPSIS
 
@@ -280,6 +280,11 @@ Then the methods return:
 
 These values are captured when the App::Cmd object is created, so it is safe to
 assign to C<$0> later.
+
+=cut
+
+sub arg0      { $_[0]->{arg0} }
+sub full_arg0 { $_[0]->{full_arg0} }
 
 =head2 prepare_command
 
