@@ -11,11 +11,11 @@ App::Cmd::Command::commands - list the application's commands
 
 =head1 VERSION
 
-version 0.205
+version 0.206
 
 =cut
 
-our $VERSION = 0.205;
+our $VERSION = 0.206;
 
 =head1 DESCRIPTION
 
@@ -84,5 +84,10 @@ sub sort_commands {
 
   return (\@head, \@tail);
 }
+
+sub description {
+"This command will list all of commands available and their abstracts.\n";
+}
+
 
 1;

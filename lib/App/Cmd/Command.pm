@@ -11,11 +11,11 @@ App::Cmd::Command - a base class for App::Cmd commands
 
 =head1 VERSION
 
-version 0.205
+version 0.206
 
 =cut
 
-our $VERSION = '0.205';
+our $VERSION = '0.206';
 
 use Carp ();
 
@@ -216,6 +216,18 @@ sub abstract {
   }
   return $result || "(unknown)";
 }
+
+=head2 description
+
+This method should be overridden to provide full option description. It
+is used by the help command.
+
+If not overridden, it returns an empty string.
+
+=cut
+
+sub description { '' }
+
 
 =head1 AUTHOR AND COPYRIGHT
 
