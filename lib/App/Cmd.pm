@@ -48,11 +48,11 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.207
+version 0.299_01
 
 =cut
 
-our $VERSION = '0.207';
+our $VERSION = '0.299_01';
 
 =head1 SYNOPSIS
 
@@ -369,7 +369,7 @@ sub execute_command {
   local our $active_cmd = $cmd;
 
   $cmd->validate_args($opt, \@args);
-  $cmd->run($opt, \@args);
+  $cmd->execute($opt, \@args);
 }
 
 =head2 plugin_search_path

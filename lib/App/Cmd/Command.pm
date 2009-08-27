@@ -11,11 +11,11 @@ App::Cmd::Command - a base class for App::Cmd commands
 
 =head1 VERSION
 
-version 0.207
+version 0.299_01
 
 =cut
 
-our $VERSION = '0.207';
+our $VERSION = '0.299_01';
 
 use Carp ();
 
@@ -69,19 +69,31 @@ sub new {
   bless $arg => $class;
 }
 
-=head2 run
+=head2 execute
 
-  $command_plugin->run(\%opt, \@args);
+  $command_plugin->execute(\%opt, \@args);
 
 This method does whatever it is the command should do!  It is passed a hash
 reference of the parsed command-line options and an array reference of left
 over arguments.
 
+If no C<execute> method is defined, it will try to call C<run> -- but it will
+warn about this behavior during testing, to remind you to fix the method name!
+
 =cut
 
+sub execute {
+  my $class = shift;
+  if ($class->can('run') and $ENV{HARNESS_ACTIVE}) {
+    warn "App::Cmd::Command subclasses should implement ->execute not ->run";
+  }
+
+  $class->run(@_);
+}
+
 sub run {
-  my ($class) = @_;
-  Carp::croak "$class does not implement mandatory method 'run'\n";
+  my $class = shift;
+  Carp::croak "$class does not implement mandatory method 'execute'\n";
 }
 
 =head2 app
