@@ -8,6 +8,7 @@ BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
 
 use File::Basename ();
 use Module::Pluggable::Object ();
+use Text::Abbrev;
 
 use Sub::Exporter -setup => {
   collectors => {
@@ -47,11 +48,11 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.206
+version 0.207
 
 =cut
 
-our $VERSION = '0.206';
+our $VERSION = '0.207';
 
 =head1 SYNOPSIS
 
@@ -175,6 +176,12 @@ sub _command {
   }
 
   $self->_load_default_plugin($_, $arg, \%plugin) for qw(commands help);
+
+  if ($self->allow_any_unambiguous_abbrev) {
+    # add abbreviations to list of authorized commands
+    my %abbrev = abbrev keys %plugin;
+    @plugin{ keys %abbrev } = @plugin{ values %abbrev };
+  }
 
   return \%plugin;
 }
@@ -404,6 +411,23 @@ sub plugin_search_path {
     return \@default;
   }
 }
+
+=head2 allow_any_unambiguous_abbrev
+
+If this method returns true (which, by default, it does I<not>), then any
+unambiguous abbreviation for a registered command name will be allowed as a
+means to use that command.  For example, given the following commands:
+
+  reticulate
+  reload
+  rasterize
+
+Then the user could use C<ret> for C<reticulate> or C<ra> for C<rasterize> and
+so on.
+
+=cut
+
+sub allow_any_unambiguous_abbrev { return 0 }
 
 =head2 global_options
 

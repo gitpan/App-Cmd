@@ -27,6 +27,7 @@ MANIFEST			This list of files
 META.yml
 README
 t/00-load.t
+t/abbrev.t
 t/basic.t
 t/lib/Test/MyCmd.pm
 t/lib/Test/MyCmd/Command/frobulate.pm
@@ -35,6 +36,10 @@ t/lib/Test/MyCmd/Command/stock.pm
 t/lib/Test/MyCmd2.pm
 t/lib/Test/MyCmd2/Command/foo.pm
 t/lib/Test/MyCmd2/Command/foo/bar.pm
+t/lib/Test/MyCmdAbbrev.pm
+t/lib/Test/MyCmdAbbrev/Command/bar.pm
+t/lib/Test/MyCmdAbbrev/Command/baz.pm
+t/lib/Test/MyCmdAbbrev/Command/foo.pm
 t/lib/Test/MySimple.pm
 t/lib/Test/WithSetup.pm
 t/lib/Test/WithSetup/Command.pm
