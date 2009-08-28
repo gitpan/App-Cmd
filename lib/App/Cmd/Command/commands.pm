@@ -11,11 +11,11 @@ App::Cmd::Command::commands - list the application's commands
 
 =head1 VERSION
 
-version 0.299_01
+version 0.300
 
 =cut
 
-our $VERSION = 0.299_01;
+our $VERSION = 0.300;
 
 =head1 DESCRIPTION
 
@@ -24,7 +24,7 @@ all of an App::Cmd's commands and their abstracts.
 
 =head1 METHODS
 
-=head2 C<run>
+=head2 execute
 
 This is the command's primary method and raison d'etre.  It prints the
 application's usage text (if any) followed by a sorted listing of the
@@ -35,7 +35,7 @@ group is set off by blank lines.
 
 =cut
 
-sub run {
+sub execute {
   my ($self) = @_;
 
   local $@;

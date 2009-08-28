@@ -11,11 +11,11 @@ App::Cmd::Command - a base class for App::Cmd commands
 
 =head1 VERSION
 
-version 0.299_01
+version 0.300
 
 =cut
 
-our $VERSION = '0.299_01';
+our $VERSION = '0.300';
 
 use Carp ();
 
@@ -71,6 +71,8 @@ sub new {
 
 =head2 execute
 
+=for Pod::Coverage run
+
   $command_plugin->execute(\%opt, \@args);
 
 This method does whatever it is the command should do!  It is passed a hash
@@ -84,15 +86,14 @@ warn about this behavior during testing, to remind you to fix the method name!
 
 sub execute {
   my $class = shift;
-  if ($class->can('run') and $ENV{HARNESS_ACTIVE}) {
-    warn "App::Cmd::Command subclasses should implement ->execute not ->run";
+
+  if (my $run = $class->can('run')) {
+    warn "App::Cmd::Command subclasses should implement ->execute not ->run"
+      if $ENV{HARNESS_ACTIVE};
+
+    return $class->$run(@_);
   }
 
-  $class->run(@_);
-}
-
-sub run {
-  my $class = shift;
   Carp::croak "$class does not implement mandatory method 'execute'\n";
 }
 
