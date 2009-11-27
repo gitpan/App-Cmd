@@ -11,11 +11,11 @@ App::Cmd::Command - a base class for App::Cmd commands
 
 =head1 VERSION
 
-version 0.301
+version 0.302
 
 =cut
 
-our $VERSION = '0.301';
+our $VERSION = '0.302';
 
 use Carp ();
 
@@ -94,7 +94,7 @@ sub execute {
     return $class->$run(@_);
   }
 
-  Carp::croak "$class does not implement mandatory method 'execute'\n";
+  Carp::croak ref($class) . " does not implement mandatory method 'execute'\n";
 }
 
 =head2 app

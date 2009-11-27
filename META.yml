@@ -21,7 +21,7 @@ no_index:
     - t
     - xt
 requires:
-  Getopt::Long::Descriptive: 0.075
+  Getopt::Long::Descriptive: 0.08
   Module::Pluggable::Object: 0
   Sub::Exporter: 0.975
   Sub::Install: 0
@@ -29,4 +29,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://github.com/rjbs/app-cmd
-version: 0.301
+version: 0.302
