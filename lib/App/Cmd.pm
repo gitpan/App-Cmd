@@ -51,11 +51,11 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.304
+version 0.305
 
 =cut
 
-our $VERSION = '0.304';
+our $VERSION = '0.305';
 
 =head1 SYNOPSIS
 
@@ -580,7 +580,7 @@ sub global_opt_spec {
 
 =head2 usage_error
 
-  $self->usage_error("Your mother!");
+  $self->usage_error("Something's wrong!");
 
 Used to die with nice usage output, during C<validate_args>.
 

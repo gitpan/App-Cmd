@@ -8,7 +8,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.91'
+generated_by: 'Module::Install version 0.94'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -23,10 +23,11 @@ no_index:
 requires:
   Getopt::Long::Descriptive: 0.081
   Module::Pluggable::Object: 0
+  String::RewritePrefix: 0
   Sub::Exporter: 0.975
   Sub::Install: 0
   perl: 5.6.0
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://github.com/rjbs/app-cmd
-version: 0.304
+version: 0.305
