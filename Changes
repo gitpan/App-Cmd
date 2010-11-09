@@ -1,5 +1,12 @@
 Revision history for App-Cmd
 
+0.308     2010-11-08
+
+          When App::Cmd::Setup tries to load MyApp::Command, and it exists but
+          will not compile, the exception will now propagate.  Previously, it
+          failed silently and App::Cmd::Command was used instead.  (bug found
+          and fixed and tested for by Kent Fredric; thanks!)
+
 0.307     2010-03-09
           bump up required version of Getopt::Long::Descriptive
 

@@ -1,77 +1,11 @@
 use strict;
 use warnings;
 package App::Cmd::Setup;
+BEGIN {
+  $App::Cmd::Setup::VERSION = '0.308';
+}
+# ABSTRACT: helper for setting up App::Cmd classes
 
-our $VERSION = 0.307;
-
-=head1 NAME
-
-App::Cmd::Setup - helper for setting up App::Cmd classes
-
-=head1 OVERVIEW
-
-App::Cmd::Setup is a helper library, used to set up base classes that will be
-used as part of an App::Cmd program.  For the most part you should refer to
-L<the manual|App::Cmd::Manual> for how you should use this library.
-
-This class is useful in three scenarios:
-
-=over 4
-
-=item when writing your App::Cmd subclass
-
-Instead of writing:
-
-  package MyApp;
-  use base 'App::Cmd';
-
-...you can write:
-
-  package MyApp;
-  use App::Cmd::Setup -app;
-
-The benefits of doing this are mostly minor, and relate to sanity-checking your
-class.  The significant benefit is that this form allows you to specify
-plugins, as in:
-
-  package MyApp;
-  use App::Cmd::Setup -app => { plugins => [ 'Prompt' ] };
-
-Plugins are described in L<App::Cmd::Manual> and L<App::Cmd::Plugin>.
-
-=item when writing abstract base classes for commands
-
-That is: when you write a subclass of L<App::Cmd::Command> that is intended for
-other commands to use as their base class, you should use App::Cmd::Setup.  For
-example, if you want all the commands in MyApp to inherit from MyApp::Command,
-you may want to write that package like this:
-
-  package MyApp::Command;
-  use App::Cmd::Setup -command;
-
-Do not confuse this with the way you will write specific commands:
-
-  package MyApp::Command::mycmd;
-  use MyApp -command;
-
-Again, this form mostly performs some validation and setup behind the scenes
-for you.  You can use C<L<base>> if you prefer.
-
-=item when writing App::Cmd plugins
-
-L<App::Cmd::Plugin> is a mechanism that allows an App::Cmd class to inject code
-into all its command classes, providing them with utility routines.
-
-To write a plugin, you must use App::Cmd::Setup.  As seen above, you must also
-use App::Cmd::Setup to set up your App::Cmd subclass if you wish to consume
-plugins.
-
-For more information on writing plugins, see L<App::Cmd::Manual> and
-L<App::Cmd::Plugin>.
-
-=back
-
-=cut
 
 use App::Cmd ();
 use App::Cmd::Command ();
@@ -110,10 +44,29 @@ sub _make_app_class {
   $self->_make_x_isa_y($into, $self->_app_base_class);
 
   my $cmd_base = $into->_default_command_base;
+  my $has_cmd_base;
+
+  # test for the $cmd_base module existing.
+  # it being missing is fine, but if its broken, we should tell somebody
+  if (eval "require $cmd_base; 1") {
+    # loading the file works
+    $has_cmd_base = 1;
+  } else {
+    # Determine if the file is just missing, or if its broken.
+    # If its broken, perl will have stashed a path in $INC for it.
+    my $modpath = $cmd_base;
+    $modpath =~ s{::}{/}g;
+    $modpath .= '.pm';
+
+    if (exists $INC{$modpath}) {
+      die $@;
+    }
+  }
+
   unless (
     eval { $cmd_base->isa( $self->_command_base_class ) }
     or
-    eval "require $cmd_base; 1"
+    $has_cmd_base
   ) {
     my $base = $self->_command_base_class;
     Sub::Install::install_sub({
@@ -203,3 +156,91 @@ sub _make_plugin_class {
 }
 
 1;
+
+__END__
+=pod
+
+=head1 NAME
+
+App::Cmd::Setup - helper for setting up App::Cmd classes
+
+=head1 VERSION
+
+version 0.308
+
+=head1 OVERVIEW
+
+App::Cmd::Setup is a helper library, used to set up base classes that will be
+used as part of an App::Cmd program.  For the most part you should refer to
+L<the tutorial|App::Cmd::Tutorial> for how you should use this library.
+
+This class is useful in three scenarios:
+
+=over 4
+
+=item when writing your App::Cmd subclass
+
+Instead of writing:
+
+  package MyApp;
+  use base 'App::Cmd';
+
+...you can write:
+
+  package MyApp;
+  use App::Cmd::Setup -app;
+
+The benefits of doing this are mostly minor, and relate to sanity-checking your
+class.  The significant benefit is that this form allows you to specify
+plugins, as in:
+
+  package MyApp;
+  use App::Cmd::Setup -app => { plugins => [ 'Prompt' ] };
+
+Plugins are described in L<App::Cmd::Tutorial> and L<App::Cmd::Plugin>.
+
+=item when writing abstract base classes for commands
+
+That is: when you write a subclass of L<App::Cmd::Command> that is intended for
+other commands to use as their base class, you should use App::Cmd::Setup.  For
+example, if you want all the commands in MyApp to inherit from MyApp::Command,
+you may want to write that package like this:
+
+  package MyApp::Command;
+  use App::Cmd::Setup -command;
+
+Do not confuse this with the way you will write specific commands:
+
+  package MyApp::Command::mycmd;
+  use MyApp -command;
+
+Again, this form mostly performs some validation and setup behind the scenes
+for you.  You can use C<L<base>> if you prefer.
+
+=item when writing App::Cmd plugins
+
+L<App::Cmd::Plugin> is a mechanism that allows an App::Cmd class to inject code
+into all its command classes, providing them with utility routines.
+
+To write a plugin, you must use App::Cmd::Setup.  As seen above, you must also
+use App::Cmd::Setup to set up your App::Cmd subclass if you wish to consume
+plugins.
+
+For more information on writing plugins, see L<App::Cmd::Manual> and
+L<App::Cmd::Plugin>.
+
+=back
+
+=head1 AUTHOR
+
+Ricardo Signes <rjbs@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Ricardo Signes.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+

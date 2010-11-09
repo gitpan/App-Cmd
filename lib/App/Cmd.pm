@@ -3,8 +3,12 @@ use warnings;
 use 5.006;
 
 package App::Cmd;
+BEGIN {
+  $App::Cmd::VERSION = '0.308';
+}
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
+# ABSTRACT: write command line apps with less suffering
 
 use File::Basename ();
 use Module::Pluggable::Object ();
@@ -45,103 +49,6 @@ sub _setup_command {
 
 sub _plugin_plugins { return }
 
-=head1 NAME
-
-App::Cmd - write command line apps with less suffering
-
-=head1 VERSION
-
-version 0.307
-
-=cut
-
-our $VERSION = '0.307';
-
-=head1 SYNOPSIS
-
-in F<yourcmd>:
-
-  use YourApp;
-  YourApp->run;
-
-in F<YourApp.pm>:
-
-  package YourApp;
-  use App::Cmd::Setup -app;
-  1;
-
-in F<YourApp/Command/blort.pm>:
-
-  package YourApp::Command::blort;
-  use YourApp -command;
-  use strict; use warnings;
-
-  sub opt_spec {
-    return (
-      [ "blortex|X",  "use the blortex algorithm" ],
-      [ "recheck|r",  "recheck all results"       ],
-    );
-  }
-
-  sub validate_args {
-    my ($self, $opt, $args) = @_;
-
-    # no args allowed but options!
-    $self->usage_error("No args allowed") if @$args;
-  }
-
-  sub run {
-    my ($self, $opt, $args) = @_;
-
-    my $result = $opt->{blortex} ? blortex() : blort();
-
-    recheck($result) if $opt->{recheck};
-
-    print $result;
-  }
-
-and, finally, at the command line:
-
-  knight!rjbs$ yourcmd blort --recheck
-
-  All blorts successful.
-
-=head1 DESCRIPTION
-
-App::Cmd is intended to make it easy to write complex command-line applications
-without having to think about most of the annoying things usually involved.
-
-For information on how to start using App::Cmd, see App::Cmd::Tutorial.
-
-=head1 METHODS
-
-=head2 new
-
-  my $cmd = App::Cmd->new(\%arg);
-
-This method returns a new App::Cmd object.  During initialization, command
-plugins will be loaded.
-
-Valid arguments are:
-
-  no_commands_plugin - if true, the command list plugin is not added
-
-  no_help_plugin     - if true, the help plugin is not added
-
-  plugin_search_path - The path to search for commands in. Defaults to
-                       results of plugin_search_path method
-
-If C<no_commands_plugin> is not given, App::Cmd::Command::commands will be
-required, and it will be registered to handle all of its command names not
-handled by other plugins.
-
-If C<no_help_plugin> is not given, App::Cmd::Command::help will be required,
-and it will be registered to handle all of its command names not handled by
-other plugins. B<Note:> "help" is the default command, so if you do not load
-the default help plugin, you should provide our own or override the
-C<default_command> method.
-
-=cut
 
 sub new {
   my ($class, $arg) = @_;
@@ -238,21 +145,6 @@ sub _load_default_plugin {
   }
 }
 
-=head2 run
-
-  $cmd->run;
-
-This method runs the application.  If called the class, it will instantiate a
-new App::Cmd object to run.
-
-It determines the requested command (generally by consuming the first
-command-line argument), finds the plugin to handle that command, parses the
-remaining arguments according to that plugin's rules, and runs the plugin.
-
-It passes the contents of the global argument array (C<@ARGV>) to
-L</C<prepare_command>>, but C<@ARGV> is not altered by running an App::Cmd.
-
-=cut
 
 sub run {
   my ($self) = @_;
@@ -267,45 +159,10 @@ sub run {
   $self->execute_command($cmd, $opt, @args);
 }
 
-=head2 arg0
-
-=head2 full_arg0
-
-  my $program_name = $app->arg0;
-
-  my $full_program_name = $app->full_arg0;
-
-These methods return the name of the program invoked to run this application.
-This is determined by inspecting C<$0> when the App::Cmd object is
-instantiated, so it's probably correct, but doing weird things with App::Cmd
-could lead to weird values from these methods.
-
-If the program was run like this:
-
-  knight!rjbs$ ~/bin/rpg dice 3d6
-
-Then the methods return:
-
-  arg0      - rpg
-  full_arg0 - /Users/rjbs/bin/rpg
-
-These values are captured when the App::Cmd object is created, so it is safe to
-assign to C<$0> later.
-
-=cut
 
 sub arg0      { $_[0]->{arg0} }
 sub full_arg0 { $_[0]->{full_arg0} }
 
-=head2 prepare_command
-
-  my ($cmd, $opt, @args) = $app->prepare_command(@ARGV);
-
-This method will load the plugin for the requested command, use its options to
-parse the command line arguments, and eventually return everything necessary to
-actually execute the command.
-
-=cut
 
 sub prepare_command {
   my ($self, @args) = @_;
@@ -350,22 +207,9 @@ sub _bad_command {
 
 END { exit 1 if our $_bad };
 
-=head2 default_command
-
-This method returns the name of the command to run if none is given on the
-command line.  The default default is "help"
-
-=cut
 
 sub default_command { "help" }
 
-=head2 execute_command
-
-  $app->execute_command($cmd, \%opt, @args);
-
-This method will invoke C<validate_args> and then C<run> on C<$cmd>.
-
-=cut
 
 sub execute_command {
   my ($self, $cmd, $opt, @args) = @_;
@@ -376,16 +220,6 @@ sub execute_command {
   $cmd->execute($opt, \@args);
 }
 
-=head2 plugin_search_path
-
-This method returns the plugin_search_path as set.  The default implementation,
-if called on "YourApp::Cmd" will return "YourApp::Cmd::Command"
-
-This is a method because it's fun to override it with, for example:
-
-  use constant plugin_search_path => __PACKAGE__;
-
-=cut
 
 sub _default_command_base {
   my ($self) = @_;
@@ -416,31 +250,9 @@ sub plugin_search_path {
   }
 }
 
-=head2 allow_any_unambiguous_abbrev
-
-If this method returns true (which, by default, it does I<not>), then any
-unambiguous abbreviation for a registered command name will be allowed as a
-means to use that command.  For example, given the following commands:
-
-  reticulate
-  reload
-  rasterize
-
-Then the user could use C<ret> for C<reticulate> or C<ra> for C<rasterize> and
-so on.
-
-=cut
 
 sub allow_any_unambiguous_abbrev { return 0 }
 
-=head2 global_options
-
-  if ($cmd->app->global_options->{verbose}) { ... }
-
-This method returns the running application's global options as a hashref.  If
-there are no options specified, an empty hashref is returend.
-
-=cut
 
 sub global_options {
 	my $self = shift;
@@ -448,40 +260,18 @@ sub global_options {
   return {};
 }
 
-=head2 set_global_options
-
-  $app->set_global_options(\%opt);
-
-This method sets the global options.
-
-=cut
 
 sub set_global_options {
   my ($self, $opt) = @_;
   return $self->{global_options} = $opt;
 }
 
-=head2 command_names
-
-  my @names = $cmd->command_names;
-
-This returns the commands names which the App::Cmd object will handle.
-
-=cut
 
 sub command_names {
   my ($self) = @_;
   keys %{ $self->_command };
 }
 
-=head2 command_plugins
-
-  my @plugins = $cmd->command_plugins;
-
-This method returns the package names of the plugins that implement the
-App::Cmd object's commands.
-
-=cut
 
 sub command_plugins {
   my ($self) = @_;
@@ -489,14 +279,6 @@ sub command_plugins {
   keys %seen;
 }
 
-=head2 plugin_for
-
-  my $plugin = $cmd->plugin_for($command);
-
-This method returns the plugin (module) for the given command.  If no plugin
-implements the command, it returns false.
-
-=cut
 
 sub plugin_for {
   my ($self, $command) = @_;
@@ -505,13 +287,6 @@ sub plugin_for {
   return $self->_command->{ $command };
 }
 
-=head2 get_command
-
-  my ($command_name, $opt, @args) = $app->get_command(@args);
-
-Process arguments and into a command name and (optional) global options.
-
-=cut
 
 sub get_command {
   my ($self, @args) = @_;
@@ -543,48 +318,21 @@ sub _global_option_processing_params {
   );
 }
 
-=head2 usage
-
-  print $self->app->usage->text;
-
-Returns the usage object for the global options.
-
-=cut
 
 sub usage { $_[0]{usage} };
 
-=head2 usage_desc
-
-The top level usage line. Looks something like
-
-  "yourapp [options] <command>"
-
-=cut
 
 sub usage_desc {
   # my ($self) = @_; # no point in creating these ops, just to toss $self
   return "%c %o <command>";
 }
 
-=head2 global_opt_spec
-
-Returns an empty list. Can be overridden for pre-dispatch option processing.
-This is useful for flags like --verbose.
-
-=cut
 
 sub global_opt_spec {
   # my ($self) = @_; # no point in creating these ops, just to toss $self
   return;
 }
 
-=head2 usage_error
-
-  $self->usage_error("Something's wrong!");
-
-Used to die with nice usage output, during C<validate_args>.
-
-=cut
 
 sub usage_error {
   my ($self, $error) = @_;
@@ -598,28 +346,274 @@ sub _usage_text {
   return $text;
 }
 
+
+1;
+
+__END__
+=pod
+
+=head1 NAME
+
+App::Cmd - write command line apps with less suffering
+
+=head1 VERSION
+
+version 0.308
+
+=head1 SYNOPSIS
+
+in F<yourcmd>:
+
+  use YourApp;
+  YourApp->run;
+
+in F<YourApp.pm>:
+
+  package YourApp;
+  use App::Cmd::Setup -app;
+  1;
+
+in F<YourApp/Command/blort.pm>:
+
+  package YourApp::Command::blort;
+  use YourApp -command;
+  use strict; use warnings;
+
+  sub opt_spec {
+    return (
+      [ "blortex|X",  "use the blortex algorithm" ],
+      [ "recheck|r",  "recheck all results"       ],
+    );
+  }
+
+  sub validate_args {
+    my ($self, $opt, $args) = @_;
+
+    # no args allowed but options!
+    $self->usage_error("No args allowed") if @$args;
+  }
+
+  sub execute {
+    my ($self, $opt, $args) = @_;
+
+    my $result = $opt->{blortex} ? blortex() : blort();
+
+    recheck($result) if $opt->{recheck};
+
+    print $result;
+  }
+
+and, finally, at the command line:
+
+  knight!rjbs$ yourcmd blort --recheck
+
+  All blorts successful.
+
+=head1 DESCRIPTION
+
+App::Cmd is intended to make it easy to write complex command-line applications
+without having to think about most of the annoying things usually involved.
+
+For information on how to start using App::Cmd, see L<App::Cmd::Tutorial>.
+
+=head1 METHODS
+
+=head2 new
+
+  my $cmd = App::Cmd->new(\%arg);
+
+This method returns a new App::Cmd object.  During initialization, command
+plugins will be loaded.
+
+Valid arguments are:
+
+  no_commands_plugin - if true, the command list plugin is not added
+
+  no_help_plugin     - if true, the help plugin is not added
+
+  plugin_search_path - The path to search for commands in. Defaults to
+                       results of plugin_search_path method
+
+If C<no_commands_plugin> is not given, App::Cmd::Command::commands will be
+required, and it will be registered to handle all of its command names not
+handled by other plugins.
+
+If C<no_help_plugin> is not given, App::Cmd::Command::help will be required,
+and it will be registered to handle all of its command names not handled by
+other plugins. B<Note:> "help" is the default command, so if you do not load
+the default help plugin, you should provide our own or override the
+C<default_command> method.
+
+=head2 run
+
+  $cmd->run;
+
+This method runs the application.  If called the class, it will instantiate a
+new App::Cmd object to run.
+
+It determines the requested command (generally by consuming the first
+command-line argument), finds the plugin to handle that command, parses the
+remaining arguments according to that plugin's rules, and runs the plugin.
+
+It passes the contents of the global argument array (C<@ARGV>) to
+L</C<prepare_command>>, but C<@ARGV> is not altered by running an App::Cmd.
+
+=head2 arg0
+
+=head2 full_arg0
+
+  my $program_name = $app->arg0;
+
+  my $full_program_name = $app->full_arg0;
+
+These methods return the name of the program invoked to run this application.
+This is determined by inspecting C<$0> when the App::Cmd object is
+instantiated, so it's probably correct, but doing weird things with App::Cmd
+could lead to weird values from these methods.
+
+If the program was run like this:
+
+  knight!rjbs$ ~/bin/rpg dice 3d6
+
+Then the methods return:
+
+  arg0      - rpg
+  full_arg0 - /Users/rjbs/bin/rpg
+
+These values are captured when the App::Cmd object is created, so it is safe to
+assign to C<$0> later.
+
+=head2 prepare_command
+
+  my ($cmd, $opt, @args) = $app->prepare_command(@ARGV);
+
+This method will load the plugin for the requested command, use its options to
+parse the command line arguments, and eventually return everything necessary to
+actually execute the command.
+
+=head2 default_command
+
+This method returns the name of the command to run if none is given on the
+command line.  The default default is "help"
+
+=head2 execute_command
+
+  $app->execute_command($cmd, \%opt, @args);
+
+This method will invoke C<validate_args> and then C<run> on C<$cmd>.
+
+=head2 plugin_search_path
+
+This method returns the plugin_search_path as set.  The default implementation,
+if called on "YourApp::Cmd" will return "YourApp::Cmd::Command"
+
+This is a method because it's fun to override it with, for example:
+
+  use constant plugin_search_path => __PACKAGE__;
+
+=head2 allow_any_unambiguous_abbrev
+
+If this method returns true (which, by default, it does I<not>), then any
+unambiguous abbreviation for a registered command name will be allowed as a
+means to use that command.  For example, given the following commands:
+
+  reticulate
+  reload
+  rasterize
+
+Then the user could use C<ret> for C<reticulate> or C<ra> for C<rasterize> and
+so on.
+
+=head2 global_options
+
+  if ($cmd->app->global_options->{verbose}) { ... }
+
+This method returns the running application's global options as a hashref.  If
+there are no options specified, an empty hashref is returend.
+
+=head2 set_global_options
+
+  $app->set_global_options(\%opt);
+
+This method sets the global options.
+
+=head2 command_names
+
+  my @names = $cmd->command_names;
+
+This returns the commands names which the App::Cmd object will handle.
+
+=head2 command_plugins
+
+  my @plugins = $cmd->command_plugins;
+
+This method returns the package names of the plugins that implement the
+App::Cmd object's commands.
+
+=head2 plugin_for
+
+  my $plugin = $cmd->plugin_for($command);
+
+This method returns the plugin (module) for the given command.  If no plugin
+implements the command, it returns false.
+
+=head2 get_command
+
+  my ($command_name, $opt, @args) = $app->get_command(@args);
+
+Process arguments and into a command name and (optional) global options.
+
+=head2 usage
+
+  print $self->app->usage->text;
+
+Returns the usage object for the global options.
+
+=head2 usage_desc
+
+The top level usage line. Looks something like
+
+  "yourapp [options] <command>"
+
+=head2 global_opt_spec
+
+Returns an empty list. Can be overridden for pre-dispatch option processing.
+This is useful for flags like --verbose.
+
+=head2 usage_error
+
+  $self->usage_error("Something's wrong!");
+
+Used to die with nice usage output, during C<validate_args>.
+
 =head1 TODO
 
-=over
+=over 4
 
-=item * publish and bring in Log::Speak (simple quiet/verbose output)
+=item *
 
-=item * publish and use our internal enhanced describe_options
+publish and bring in Log::Speak (simple quiet/verbose output)
 
-=item * publish and use our improved simple input routines
+=item *
+
+publish and use our internal enhanced describe_options
+
+=item *
+
+publish and use our improved simple input routines
 
 =back
 
-=head1 COPYRIGHT AND AUTHOR 
+=head1 AUTHOR
 
-Copyright 2005-2006, (code (simply)).  App::Cmd and bundled code are free
-software, released under the same terms as perl itself.
+Ricardo Signes <rjbs@cpan.org>
 
-App::Cmd was originally written as Rubric::CLI by Ricardo SIGNES in 2005.  It
-was refactored extensively by Ricardo SIGNES and John Cappiello and released as
-App::Cmd in 2006.  Yuval Kogman performed significant refactoring and other
-improvements on the code.
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Ricardo Signes.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
 
-1;

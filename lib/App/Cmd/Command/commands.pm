@@ -2,38 +2,14 @@ use strict;
 use warnings;
 
 package App::Cmd::Command::commands;
+BEGIN {
+  $App::Cmd::Command::commands::VERSION = '0.308';
+}
 use App::Cmd::Command;
 BEGIN { our @ISA = 'App::Cmd::Command' };
 
-=head1 NAME
+# ABSTRACT: list the application's commands
 
-App::Cmd::Command::commands - list the application's commands
-
-=head1 VERSION
-
-version 0.307
-
-=cut
-
-our $VERSION = 0.307;
-
-=head1 DESCRIPTION
-
-This command plugin implements a "commands" command.  This command will list
-all of an App::Cmd's commands and their abstracts.
-
-=head1 METHODS
-
-=head2 execute
-
-This is the command's primary method and raison d'etre.  It prints the
-application's usage text (if any) followed by a sorted listing of the
-application's commands and their abstracts.
-
-The commands are printed in sorted groups (created by C<sort_commands>); each
-group is set off by blank lines.
-
-=cut
 
 sub execute {
   my ($self) = @_;
@@ -62,17 +38,6 @@ sub execute {
   }
 }
 
-=head2 C<sort_commands>
-
-  my @sorted = $cmd->sort_commands(@unsorted);
-
-This method orders the list of commands into sets which it returns as a list of
-arrayrefs.
-
-By default, the first group is for the "help" and "commands" commands, and all
-other commands are in the second group.
-
-=cut
 
 sub sort_commands {
   my ($self, @commands) = @_;
@@ -91,3 +56,54 @@ sub description {
 
 
 1;
+
+__END__
+=pod
+
+=head1 NAME
+
+App::Cmd::Command::commands - list the application's commands
+
+=head1 VERSION
+
+version 0.308
+
+=head1 DESCRIPTION
+
+This command plugin implements a "commands" command.  This command will list
+all of an App::Cmd's commands and their abstracts.
+
+=head1 METHODS
+
+=head2 execute
+
+This is the command's primary method and raison d'etre.  It prints the
+application's usage text (if any) followed by a sorted listing of the
+application's commands and their abstracts.
+
+The commands are printed in sorted groups (created by C<sort_commands>); each
+group is set off by blank lines.
+
+=head2 C<sort_commands>
+
+  my @sorted = $cmd->sort_commands(@unsorted);
+
+This method orders the list of commands into sets which it returns as a list of
+arrayrefs.
+
+By default, the first group is for the "help" and "commands" commands, and all
+other commands are in the second group.
+
+=head1 AUTHOR
+
+Ricardo Signes <rjbs@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Ricardo Signes.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+

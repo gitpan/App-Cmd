@@ -1,18 +1,66 @@
-use inc::Module::Install;
 
-all_from('lib/App/Cmd.pm');
+use strict;
+use warnings;
 
-requires('Getopt::Long::Descriptive' => 0.084); # Opts improvements, bugfixes
-requires('Module::Pluggable::Object' => 0.00);
-requires('Sub::Exporter'             => 0.975); # curry_method
-requires('Sub::Install'              => 0.00);  # minimum unknown
-requires('String::RewritePrefix'     => 0.00);  # minimum unknown
+BEGIN { require 5.006; }
 
-test_requires('IO::TieCombine'       => 1.000); # first release
+use ExtUtils::MakeMaker 6.31;
 
-extra_tests;
 
-repository('http://github.com/rjbs/app-cmd');
-auto_manifest;
 
-WriteAll();
+my %WriteMakefileArgs = (
+  'ABSTRACT' => 'write command line apps with less suffering',
+  'AUTHOR' => 'Ricardo Signes <rjbs@cpan.org>',
+  'BUILD_REQUIRES' => {
+    'Data::Dumper' => '0',
+    'Test::Fatal' => '0',
+    'Test::More' => '0.96',
+    'constant' => '0'
+  },
+  'CONFIGURE_REQUIRES' => {
+    'ExtUtils::MakeMaker' => '6.31'
+  },
+  'DISTNAME' => 'App-Cmd',
+  'EXE_FILES' => [],
+  'LICENSE' => 'perl',
+  'NAME' => 'App::Cmd',
+  'PREREQ_PM' => {
+    'Carp' => '0',
+    'Data::OptList' => '0',
+    'File::Basename' => '0',
+    'Getopt::Long::Descriptive' => '0',
+    'IO::TieCombine' => '0',
+    'Module::Pluggable::Object' => '0',
+    'String::RewritePrefix' => '0',
+    'Sub::Exporter' => '0',
+    'Sub::Exporter::Util' => '0',
+    'Sub::Install' => '0',
+    'Text::Abbrev' => '0'
+  },
+  'VERSION' => '0.308',
+  'test' => {
+    'TESTS' => 't/*.t'
+  }
+);
+
+
+unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
+  my $br = delete $WriteMakefileArgs{BUILD_REQUIRES};
+  my $pp = $WriteMakefileArgs{PREREQ_PM};
+  for my $mod ( keys %$br ) {
+    if ( exists $pp->{$mod} ) {
+      $pp->{$mod} = $br->{$mod} if $br->{$mod} > $pp->{$mod};
+    }
+    else {
+      $pp->{$mod} = $br->{$mod};
+    }
+  }
+}
+
+delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
+  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
+
+WriteMakefile(%WriteMakefileArgs);
+
+
+

@@ -1,7 +1,19 @@
 
+
+
+# ABSTRACT: getting started with App::Cmd
+# PODNAME: App::Cmd::Tutorial
+
+__END__
+=pod
+
 =head1 NAME
 
 App::Cmd::Tutorial - getting started with App::Cmd
+
+=head1 VERSION
+
+version 0.308
 
 =head1 DESCRIPTION
 
@@ -58,8 +70,8 @@ Now it works:
   $ yourcmd initialize
   Everything has been initialized.  (Not really.)
 
-The arguments to the run method are the parsed options from the command line
-(that is, the switches) and the remaining arguments.  With a properly
+The arguments to the execute method are the parsed options from the command
+line (that is, the switches) and the remaining arguments.  With a properly
 configured command class, the following invocation:
 
   $ yourcmd reset -zB --new-seed xyzxy foo.db bar.db
@@ -80,7 +92,8 @@ C<usage_desc> provides the usage format string; C<opt_spec> provides the option
 specification list; C<validate_args> is run after Getopt::Long::Descriptive,
 and is meant to validate the C<$args>, which GLD ignores.
 
-The first two methods provide configuration passed to GLD's C<describe_options> routine.  To improve our command class, we might add the following code:
+The first two methods provide configuration passed to GLD's C<describe_options>
+routine.  To improve our command class, we might add the following code:
 
   sub usage_desc { "yourcmd %o [dbfile ...]" }
 
@@ -160,12 +173,16 @@ an "inner" method (see previous tip for an example).
 
 =back
 
-=head1 AUTHOR AND COPYRIGHT
+=head1 AUTHOR
 
-Copyright 2005-2006, (code (simply)).  All rights reserved;  App::Cmd and
-bundled code are free software, released under the same terms as perl itself.
+Ricardo Signes <rjbs@cpan.org>
 
-App:Cmd was originally written as Rubric::CLI by Ricardo SIGNES in 2005.  It
-was refactored extensively by Ricardo SIGNES and John Cappiello and released as
-App::Cmd in 2006.
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Ricardo Signes.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
 

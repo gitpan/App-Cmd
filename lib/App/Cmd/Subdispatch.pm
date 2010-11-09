@@ -2,31 +2,16 @@ use strict;
 use warnings;
 
 package App::Cmd::Subdispatch;
+BEGIN {
+  $App::Cmd::Subdispatch::VERSION = '0.308';
+}
 
 use App::Cmd;
 use App::Cmd::Command;
 BEGIN { our @ISA = qw(App::Cmd::Command App::Cmd) } 
 
-=head1 NAME
+# ABSTRACT: an App::Cmd::Command that is also an App::Cmd
 
-App::Cmd::Subdispatch - an App::Cmd::Command that is also an App::Cmd
-
-=head1 VERSION
-
-version 0.307
-
-=cut
-
-our $VERSION = '0.307';
-
-=head1 METHODS
-
-=head2 new
-
-A hackish new that allows us to have an Command instance before they normally
-exist.
-
-=cut
 
 sub new {
 	my ($inv, $fields, @args) = @_;
@@ -38,14 +23,6 @@ sub new {
 	}
 }
 
-=head2 prepare
-
-  my $subcmd = $subdispatch->prepare($app, @args);
-
-An overridden version of L<App::Cmd::Command/prepare> that performs a new
-dispatch cycle.
-
-=cut
 
 sub prepare {
 	my ($class, $app, @args) = @_;
@@ -72,27 +49,9 @@ sub _plugin_prepare {
   return $plugin->prepare($self->choose_parent_app($self->app, $plugin), @args);
 }
 
-=head2 app
-
-  $subdispatch->app;
-
-This method returns the application that this subdispatch is a command of.
-
-=cut
 
 sub app { $_[0]{app} }
 
-=head2 choose_parent_app
-
-  $subcmd->prepare(
-    $subdispatch->choose_parent_app($app, $opt, $plugin),
-    @$args
-  );
-
-A method that chooses whether the parent app or the subdispatch is going to be
-C<< $cmd->app >>.
-
-=cut
 
 sub choose_parent_app {
 	my ( $self, $app, $plugin ) = @_;
@@ -109,3 +68,58 @@ sub choose_parent_app {
 }
 
 1;
+
+__END__
+=pod
+
+=head1 NAME
+
+App::Cmd::Subdispatch - an App::Cmd::Command that is also an App::Cmd
+
+=head1 VERSION
+
+version 0.308
+
+=head1 METHODS
+
+=head2 new
+
+A hackish new that allows us to have an Command instance before they normally
+exist.
+
+=head2 prepare
+
+  my $subcmd = $subdispatch->prepare($app, @args);
+
+An overridden version of L<App::Cmd::Command/prepare> that performs a new
+dispatch cycle.
+
+=head2 app
+
+  $subdispatch->app;
+
+This method returns the application that this subdispatch is a command of.
+
+=head2 choose_parent_app
+
+  $subcmd->prepare(
+    $subdispatch->choose_parent_app($app, $opt, $plugin),
+    @$args
+  );
+
+A method that chooses whether the parent app or the subdispatch is going to be
+C<< $cmd->app >>.
+
+=head1 AUTHOR
+
+Ricardo Signes <rjbs@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Ricardo Signes.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+

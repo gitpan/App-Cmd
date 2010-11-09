@@ -1,5 +1,13 @@
 
-This is the readme for App::Cmd.  Please refer to its POD for more information.
 
-App::Cmd provides a framework for quickly building complex command-line
-applications.
+This archive contains the distribution App-Cmd,
+version 0.308:
+
+  write command line apps with less suffering
+
+This software is copyright (c) 2010 by Ricardo Signes.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+

@@ -1,12 +1,112 @@
 use strict;
 use warnings;
 package App::Cmd::Tester;
+BEGIN {
+  $App::Cmd::Tester::VERSION = '0.308';
+}
 
-our $VERSION = 0.307;
+# ABSTRACT: for capturing the result of running an app
+
+
+use Sub::Exporter::Util qw(curry_method);
+use Sub::Exporter -setup => {
+  exports => { test_app => curry_method },
+  groups  => { default  => [ qw(test_app) ] },
+};
+
+our $TEST_IN_PROGRESS;
+BEGIN {
+  *CORE::GLOBAL::exit = sub {
+    return CORE::exit(@_) unless $TEST_IN_PROGRESS;
+    App::Cmd::Tester::Exited->throw($_[0]);
+  };
+}
+
+
+sub result_class { 'App::Cmd::Tester::Result' }
+
+sub test_app {
+  my ($class, $app, $argv) = @_;
+
+  require IO::TieCombine;
+  my $hub = IO::TieCombine->new;
+
+  my $stdout = tie local *STDOUT, $hub, 'stdout';
+  my $stderr = tie local *STDERR, $hub, 'stderr';
+
+  my $run_rv;
+
+  $app = $app->new unless ref($app) or $app->isa('App::Cmd::Simple');
+
+  my $ok = eval {
+    local $TEST_IN_PROGRESS = 1;
+    local @ARGV = @$argv;
+    $run_rv = $app->run;
+    1;
+  };
+
+  my $error = $ok ? undef : $@;
+
+  my $exit_code = defined $error ? ((0+$!)||-1) : 0;
+
+  if ($error and eval { $error->isa('App::Cmd::Tester::Exited') }) {
+    $exit_code = $$error;
+  }
+
+  $class->result_class->new({
+    app    => $app,
+    stdout => $hub->slot_contents('stdout'),
+    stderr => $hub->slot_contents('stderr'),
+    output => $hub->combined_contents,
+    error  => $error,
+    run_rv => $run_rv,
+    exit_code => $exit_code
+  });
+}
+
+{
+  package App::Cmd::Tester::Result;
+BEGIN {
+  $App::Cmd::Tester::Result::VERSION = '0.308';
+}
+
+  sub new {
+    my ($class, $arg) = @_;
+    bless $arg => $class;
+  }
+
+  for my $attr (qw(app stdout stderr output error run_rv exit_code)) {
+    Sub::Install::install_sub({
+      code => sub { $_[0]->{$attr} },
+      as   => $attr,
+    });
+  }
+}
+
+{
+  package App::Cmd::Tester::Exited;
+BEGIN {
+  $App::Cmd::Tester::Exited::VERSION = '0.308';
+}
+  sub throw {
+    my ($class, $code) = @_;
+    my $self = (bless \$code => $class);
+    die $self;
+  }
+}
+
+1;
+
+__END__
+=pod
 
 =head1 NAME
 
 App::Cmd::Tester - for capturing the result of running an app
+
+=head1 VERSION
+
+version 0.308
 
 =head1 SYNOPSIS
 
@@ -60,93 +160,18 @@ the following data:
   run_rv - the return value of the run method (generally irrelevant)
   exit_code - the numeric exit code that would've been issued (0 is 'okay')
 
-=cut
+=for Pod::Coverage result_class
 
-use Sub::Exporter::Util qw(curry_method);
-use Sub::Exporter -setup => {
-  exports => { test_app => curry_method },
-  groups  => { default  => [ qw(test_app) ] },
-};
+=head1 AUTHOR
 
-our $TEST_IN_PROGRESS;
-BEGIN {
-  *CORE::GLOBAL::exit = sub {
-    return CORE::exit(@_) unless $TEST_IN_PROGRESS;
-    App::Cmd::Tester::Exited->throw($_[0]);
-  };
-}
+Ricardo Signes <rjbs@cpan.org>
 
-sub result_class { 'App::Cmd::Tester::Result' }
+=head1 COPYRIGHT AND LICENSE
 
-sub test_app {
-  my ($class, $app, $argv) = @_;
+This software is copyright (c) 2010 by Ricardo Signes.
 
-  require IO::TieCombine;
-  my $hub = IO::TieCombine->new;
-
-  my $stdout = tie local *STDOUT, $hub, 'stdout';
-  my $stderr = tie local *STDERR, $hub, 'stderr';
-
-  my $run_rv;
-
-  $app = $app->new unless ref($app) or $app->isa('App::Cmd::Simple');
-
-  my $ok = eval {
-    local $TEST_IN_PROGRESS = 1;
-    local @ARGV = @$argv;
-    $run_rv = $app->run;
-    1;
-  };
-
-  my $error = $ok ? undef : $@;
-
-  my $exit_code = defined $error ? ((0+$!)||-1) : 0;
-
-  if ($error and eval { $error->isa('App::Cmd::Tester::Exited') }) {
-    $exit_code = $$error;
-  }
-
-  $class->result_class->new({
-    app    => $app,
-    stdout => $hub->slot_contents('stdout'),
-    stderr => $hub->slot_contents('stderr'),
-    output => $hub->combined_contents,
-    error  => $error,
-    run_rv => $run_rv,
-    exit_code => $exit_code
-  });
-}
-
-{
-  package App::Cmd::Tester::Result;
-
-  sub new {
-    my ($class, $arg) = @_;
-    bless $arg => $class;
-  }
-
-  for my $attr (qw(app stdout stderr output error run_rv exit_code)) {
-    Sub::Install::install_sub({
-      code => sub { $_[0]->{$attr} },
-      as   => $attr,
-    });
-  }
-}
-
-{
-  package App::Cmd::Tester::Exited;
-  sub throw {
-    my ($class, $code) = @_;
-    my $self = (bless \$code => $class);
-    die $self;
-  }
-}
-
-=head1 AUTHOR AND COPYRIGHT
-
-Copyright 2008, (code (simply)).  All rights reserved;  App::Cmd and bundled
-code are free software, released under the same terms as perl itself.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
 
-1;

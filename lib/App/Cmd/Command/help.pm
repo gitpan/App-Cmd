@@ -2,28 +2,14 @@ use strict;
 use warnings;
 
 package App::Cmd::Command::help;
+BEGIN {
+  $App::Cmd::Command::help::VERSION = '0.308';
+}
 use App::Cmd::Command;
 BEGIN { our @ISA = 'App::Cmd::Command'; }
 
-=head1 NAME
+# ABSTRACT: display a command's help screen
 
-App::Cmd::Command::help - display a command's help screen
-
-=head1 VERSION
-
-version 0.307
-
-=cut
-
-our $VERSION = '0.307';
-
-=head1 DESCRIPTION
-
-This command plugin implements a "help" command.  This command will either list
-all of an App::Cmd's commands and their abstracts, or display the usage screen
-for a subcommand with its description.
-
-=cut
 
 sub command_names { qw/help --help -h -?/ }
 
@@ -33,7 +19,7 @@ abstracts, or display the usage screen for a subcommand with its
 description.\n"
 }
 
-sub run {
+sub execute {
   my ($self, $opts, $args) = @_;
 
   if (!@$args) {
@@ -71,3 +57,34 @@ sub run {
 }
 
 1;
+
+__END__
+=pod
+
+=head1 NAME
+
+App::Cmd::Command::help - display a command's help screen
+
+=head1 VERSION
+
+version 0.308
+
+=head1 DESCRIPTION
+
+This command plugin implements a "help" command.  This command will either list
+all of an App::Cmd's commands and their abstracts, or display the usage screen
+for a subcommand with its description.
+
+=head1 AUTHOR
+
+Ricardo Signes <rjbs@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Ricardo Signes.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
