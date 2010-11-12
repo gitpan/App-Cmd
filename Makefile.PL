@@ -37,7 +37,7 @@ my %WriteMakefileArgs = (
     'Sub::Install' => '0',
     'Text::Abbrev' => '0'
   },
-  'VERSION' => '0.308',
+  'VERSION' => '0.309',
   'test' => {
     'TESTS' => 't/*.t'
   }

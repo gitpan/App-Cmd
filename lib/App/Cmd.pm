@@ -4,7 +4,7 @@ use 5.006;
 
 package App::Cmd;
 BEGIN {
-  $App::Cmd::VERSION = '0.308';
+  $App::Cmd::VERSION = '0.309';
 }
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
@@ -358,7 +358,7 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.308
+version 0.309
 
 =head1 SYNOPSIS
 

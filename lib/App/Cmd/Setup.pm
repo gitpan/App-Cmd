@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package App::Cmd::Setup;
 BEGIN {
-  $App::Cmd::Setup::VERSION = '0.308';
+  $App::Cmd::Setup::VERSION = '0.309';
 }
 # ABSTRACT: helper for setting up App::Cmd classes
 
@@ -166,7 +166,7 @@ App::Cmd::Setup - helper for setting up App::Cmd classes
 
 =head1 VERSION
 
-version 0.308
+version 0.309
 
 =head1 OVERVIEW
 

@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Subdispatch;
 BEGIN {
-  $App::Cmd::Subdispatch::VERSION = '0.308';
+  $App::Cmd::Subdispatch::VERSION = '0.309';
 }
 
 use App::Cmd;
@@ -78,7 +78,7 @@ App::Cmd::Subdispatch - an App::Cmd::Command that is also an App::Cmd
 
 =head1 VERSION
 
-version 0.308
+version 0.309
 
 =head1 METHODS
 
