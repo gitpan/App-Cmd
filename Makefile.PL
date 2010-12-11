@@ -26,6 +26,7 @@ my %WriteMakefileArgs = (
   'NAME' => 'App::Cmd',
   'PREREQ_PM' => {
     'Carp' => '0',
+    'Class::Load' => '0.06',
     'Data::OptList' => '0',
     'File::Basename' => '0',
     'Getopt::Long::Descriptive' => '0',
@@ -37,7 +38,7 @@ my %WriteMakefileArgs = (
     'Sub::Install' => '0',
     'Text::Abbrev' => '0'
   },
-  'VERSION' => '0.309',
+  'VERSION' => '0.310',
   'test' => {
     'TESTS' => 't/*.t'
   }

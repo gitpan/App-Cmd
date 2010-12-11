@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package App::Cmd::Setup;
 BEGIN {
-  $App::Cmd::Setup::VERSION = '0.309';
+  $App::Cmd::Setup::VERSION = '0.310';
 }
 # ABSTRACT: helper for setting up App::Cmd classes
 
@@ -13,6 +13,9 @@ use App::Cmd::Plugin ();
 use Carp ();
 use Data::OptList ();
 use String::RewritePrefix ();
+
+# 0.06 is needed for load_optional_class
+use Class::Load 0.06 qw();
 
 use Sub::Exporter -setup => {
   -as     => '_import',
@@ -43,31 +46,7 @@ sub _make_app_class {
 
   $self->_make_x_isa_y($into, $self->_app_base_class);
 
-  my $cmd_base = $into->_default_command_base;
-  my $has_cmd_base;
-
-  # test for the $cmd_base module existing.
-  # it being missing is fine, but if its broken, we should tell somebody
-  if (eval "require $cmd_base; 1") {
-    # loading the file works
-    $has_cmd_base = 1;
-  } else {
-    # Determine if the file is just missing, or if its broken.
-    # If its broken, perl will have stashed a path in $INC for it.
-    my $modpath = $cmd_base;
-    $modpath =~ s{::}{/}g;
-    $modpath .= '.pm';
-
-    if (exists $INC{$modpath}) {
-      die $@;
-    }
-  }
-
-  unless (
-    eval { $cmd_base->isa( $self->_command_base_class ) }
-    or
-    $has_cmd_base
-  ) {
+  if ( ! Class::Load::load_optional_class( $into->_default_command_base ) ) {
     my $base = $self->_command_base_class;
     Sub::Install::install_sub({
       code => sub { $base },
@@ -75,6 +54,11 @@ sub _make_app_class {
       as   => '_default_command_base',
     });
   }
+
+  # TODO Check this is right. -- kentnl, 2010-12
+  #
+  #  my $want_plugin_base = $self->_plugin_base_class;
+  my $want_plugin_base = 'App::Cmd::Plugin';
 
   my @plugins;
   for my $plugin (@{ $val->{plugins} || [] }) {
@@ -85,11 +69,10 @@ sub _make_app_class {
       },
       $plugin,
     );
-
-    unless (eval { $plugin->isa($self->_plugin_base_class) }) {
-      eval "require $plugin; 1" or die "couldn't load plugin $plugin: $@";
+    Class::Load::load_class( $plugin );
+    unless( $plugin->isa( $want_plugin_base ) ){
+        die "$plugin is not a " . $want_plugin_base;
     }
-
     push @plugins, $plugin;
   }
 
@@ -166,7 +149,7 @@ App::Cmd::Setup - helper for setting up App::Cmd classes
 
 =head1 VERSION
 
-version 0.309
+version 0.310
 
 =head1 OVERVIEW
 

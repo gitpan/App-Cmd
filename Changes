@@ -1,5 +1,13 @@
 Revision history for App-Cmd
 
+
+          classes are now loaded with Class::Load, which should avoid bugs
+          where classes are not succesfully loaded by program execution
+          continues anyway (thanks to Kent Fredric)
+
+          more checking is now done to ensure that plugins are members of the
+          correct base class (thanks, Kent Fredric)
+
 0.309     2010-11-12
 
           skip a failing test on perl 5.8.x

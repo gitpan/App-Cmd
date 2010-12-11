@@ -4,7 +4,7 @@ use 5.006;
 
 package App::Cmd;
 BEGIN {
-  $App::Cmd::VERSION = '0.309';
+  $App::Cmd::VERSION = '0.310';
 }
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
@@ -12,7 +12,8 @@ BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
 
 use File::Basename ();
 use Module::Pluggable::Object ();
-use Text::Abbrev;
+use Text::Abbrev ();
+use Class::Load ();
 
 use Sub::Exporter -setup => {
   collectors => {
@@ -33,7 +34,7 @@ sub _setup_command {
 
   {
     my $base = $self->_default_command_base;
-    eval "require $base; 1" or die $@;
+    Class::Load::load_class($base);
     no strict 'refs';
     push @{"$into\::ISA"}, $base;
   }
@@ -61,23 +62,33 @@ sub new {
     arg0      => $base,
     full_arg0 => $arg0,
   };
-  
+
   bless $self => $class;
 }
- 
+
 # effectively, returns the command-to-plugin mapping guts of a Cmd
 # if called on a class or on a Cmd with no mapping, construct a new hashref
 # suitable for use as the object's mapping
 sub _command {
   my ($self, $arg) = @_;
-
   return $self->{command} if ref $self and $self->{command};
+
+  # TODO _default_command_base can be wrong if people are not using
+  # ::Setup and have no ::Command :(
+  #
+  #  my $want_isa = $self->_default_command_base;
+  # -- kentnl, 2010-12
+   my $want_isa = 'App::Cmd::Command';
 
   my %plugin;
   for my $plugin ($self->_plugins) {
-    eval "require $plugin" or die "couldn't load $plugin: $@"
-      unless eval { $plugin->isa( $self->_default_command_base ) };
+    Class::Load::load_class($plugin);
+
+    die "$plugin is not a " . $want_isa
+      unless $plugin->isa($want_isa);
+
     next unless $plugin->can("command_names");
+
     foreach my $command (map { lc } $plugin->command_names) {
       die "two plugins for command $command: $plugin and $plugin{$command}\n"
         if exists $plugin{$command};
@@ -90,7 +101,7 @@ sub _command {
 
   if ($self->allow_any_unambiguous_abbrev) {
     # add abbreviations to list of authorized commands
-    my %abbrev = abbrev keys %plugin;
+    my %abbrev = Text::Abbrev::abbrev( keys %plugin );
     @plugin{ keys %abbrev } = @plugin{ values %abbrev };
   }
 
@@ -138,7 +149,7 @@ sub _load_default_plugin {
   my ($self, $plugin_name, $arg, $plugin_href) = @_;
   unless ($arg->{"no_$plugin_name\_plugin"}) {
     my $plugin = "App::Cmd::Command::$plugin_name";
-    eval "require $plugin" or die "couldn't load $plugin: $@";
+    Class::Load::load_class($plugin);
     for my $command (map { lc } $plugin->command_names) {
       $plugin_href->{$command} ||= $plugin;
     }
@@ -154,7 +165,7 @@ sub run {
 
   # prepare the command we're going to run...
   my ($cmd, $opt, @args) = $self->prepare_command(@ARGV);
-   
+
   # ...and then run it
   $self->execute_command($cmd, $opt, @args);
 }
@@ -358,7 +369,7 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.309
+version 0.310
 
 =head1 SYNOPSIS
 
