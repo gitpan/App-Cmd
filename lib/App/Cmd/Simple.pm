@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Simple;
 BEGIN {
-  $App::Cmd::Simple::VERSION = '0.310';
+  $App::Cmd::Simple::VERSION = '0.311';
 }
 use App::Cmd::Command;
 BEGIN { our @ISA = 'App::Cmd::Command' }
@@ -102,7 +102,7 @@ App::Cmd::Simple - a helper for building one-command App::Cmd applications
 
 =head1 VERSION
 
-version 0.310
+version 0.311
 
 =head1 SYNOPSIS
 
@@ -202,7 +202,7 @@ Ricardo Signes <rjbs@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Ricardo Signes.
+This software is copyright (c) 2011 by Ricardo Signes.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

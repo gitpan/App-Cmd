@@ -29,7 +29,7 @@ my %WriteMakefileArgs = (
     'Class::Load' => '0.06',
     'Data::OptList' => '0',
     'File::Basename' => '0',
-    'Getopt::Long::Descriptive' => '0',
+    'Getopt::Long::Descriptive' => '0.084',
     'IO::TieCombine' => '0',
     'Module::Pluggable::Object' => '0',
     'String::RewritePrefix' => '0',
@@ -38,7 +38,7 @@ my %WriteMakefileArgs = (
     'Sub::Install' => '0',
     'Text::Abbrev' => '0'
   },
-  'VERSION' => '0.310',
+  'VERSION' => '0.311',
   'test' => {
     'TESTS' => 't/*.t'
   }
