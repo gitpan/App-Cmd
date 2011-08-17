@@ -1,10 +1,15 @@
 Revision history for App-Cmd
 
+0.312     2011-08-17 18:02:26 America/New_York
+          typo fixes to docs (thanks, Glenn Fowler)
+
+          add the prepare_argv method (thanks, Ingy döt Net)
+
 0.311     2011-03-17 22:42:19 America/New_York
           require the correct version of Getopt::Long::Descriptive (thanks,
           Glen Hinkle)
 
-0.310
+0.310     2010-12-11
           classes are now loaded with Class::Load, which should avoid bugs
           where classes are not succesfully loaded by program execution
           continues anyway (thanks to Kent Fredric)

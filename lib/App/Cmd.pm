@@ -3,8 +3,8 @@ use warnings;
 use 5.006;
 
 package App::Cmd;
-BEGIN {
-  $App::Cmd::VERSION = '0.311';
+{
+  $App::Cmd::VERSION = '0.312';
 }
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
@@ -164,11 +164,23 @@ sub run {
   $self = $self->new unless ref $self;
 
   # prepare the command we're going to run...
-  my ($cmd, $opt, @args) = $self->prepare_command(@ARGV);
+  my @argv = $self->prepare_args();
+  my ($cmd, $opt, @args) = $self->prepare_command(@argv);
 
   # ...and then run it
   $self->execute_command($cmd, $opt, @args);
 }
+
+
+sub prepare_args {
+  my ($self) = @_;
+  return scalar(@ARGV)
+    ? (@ARGV)
+    : (@{$self->default_args});
+}
+
+
+use constant default_args => [];
 
 
 sub arg0      { $_[0]->{arg0} }
@@ -293,6 +305,7 @@ sub command_plugins {
 
 sub plugin_for {
   my ($self, $command) = @_;
+  return unless $command;
   return unless exists $self->_command->{ $command };
 
   return $self->_command->{ $command };
@@ -369,7 +382,7 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.311
+version 0.312
 
 =head1 SYNOPSIS
 
@@ -452,7 +465,7 @@ handled by other plugins.
 If C<no_help_plugin> is not given, App::Cmd::Command::help will be required,
 and it will be registered to handle all of its command names not handled by
 other plugins. B<Note:> "help" is the default command, so if you do not load
-the default help plugin, you should provide our own or override the
+the default help plugin, you should provide your own or override the
 C<default_command> method.
 
 =head2 run
@@ -468,6 +481,17 @@ remaining arguments according to that plugin's rules, and runs the plugin.
 
 It passes the contents of the global argument array (C<@ARGV>) to
 L</C<prepare_command>>, but C<@ARGV> is not altered by running an App::Cmd.
+
+=head2 prepare_args
+
+Normally App::Cmd uses C<@ARGV> for its commandline arguments. You can override
+this method to change that behavior for testing or otherwise.
+
+=head2 default_args
+
+If C<L</prepare_args>> is not changed and there are no arguments in C<@ARGV>,
+this method is called and should return an arrayref to be used as the arguments
+to the program.  By default, it returns an empty arrayref.
 
 =head2 arg0
 
@@ -540,7 +564,7 @@ so on.
   if ($cmd->app->global_options->{verbose}) { ... }
 
 This method returns the running application's global options as a hashref.  If
-there are no options specified, an empty hashref is returend.
+there are no options specified, an empty hashref is returned.
 
 =head2 set_global_options
 

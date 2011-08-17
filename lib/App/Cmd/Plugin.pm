@@ -1,8 +1,8 @@
 use strict;
 use warnings;
 package App::Cmd::Plugin;
-BEGIN {
-  $App::Cmd::Plugin::VERSION = '0.311';
+{
+  $App::Cmd::Plugin::VERSION = '0.312';
 }
 # ABSTRACT: a plugin for App::Cmd commands
 
@@ -26,7 +26,7 @@ App::Cmd::Plugin - a plugin for App::Cmd commands
 
 =head1 VERSION
 
-version 0.311
+version 0.312
 
 =head1 AUTHOR
 
