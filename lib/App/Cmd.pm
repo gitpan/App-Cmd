@@ -4,7 +4,7 @@ use 5.006;
 
 package App::Cmd;
 {
-  $App::Cmd::VERSION = '0.312';
+  $App::Cmd::VERSION = '0.313';
 }
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
@@ -12,7 +12,6 @@ BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
 
 use File::Basename ();
 use Module::Pluggable::Object ();
-use Text::Abbrev ();
 use Class::Load ();
 
 use Sub::Exporter -setup => {
@@ -101,6 +100,7 @@ sub _command {
 
   if ($self->allow_any_unambiguous_abbrev) {
     # add abbreviations to list of authorized commands
+    require Text::Abbrev;
     my %abbrev = Text::Abbrev::abbrev( keys %plugin );
     @plugin{ keys %abbrev } = @plugin{ values %abbrev };
   }
@@ -382,7 +382,7 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.312
+version 0.313
 
 =head1 SYNOPSIS
 

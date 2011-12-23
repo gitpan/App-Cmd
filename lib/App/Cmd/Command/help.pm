@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Command::help;
 {
-  $App::Cmd::Command::help::VERSION = '0.312';
+  $App::Cmd::Command::help::VERSION = '0.313';
 }
 use App::Cmd::Command;
 BEGIN { our @ISA = 'App::Cmd::Command'; }
@@ -67,7 +67,7 @@ App::Cmd::Command::help - display a command's help screen
 
 =head1 VERSION
 
-version 0.312
+version 0.313
 
 =head1 DESCRIPTION
 

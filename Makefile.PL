@@ -9,38 +9,41 @@ use ExtUtils::MakeMaker 6.30;
 
 
 my %WriteMakefileArgs = (
-  'ABSTRACT' => 'write command line apps with less suffering',
-  'AUTHOR' => 'Ricardo Signes <rjbs@cpan.org>',
-  'BUILD_REQUIRES' => {
-    'Data::Dumper' => '0',
-    'Test::Fatal' => '0',
-    'Test::More' => '0.96'
+  "ABSTRACT" => "write command line apps with less suffering",
+  "AUTHOR" => "Ricardo Signes <rjbs\@cpan.org>",
+  "BUILD_REQUIRES" => {
+    "Data::Dumper" => 0,
+    "Test::Fatal" => 0,
+    "Test::More" => "0.96",
+    "base" => 0
   },
-  'CONFIGURE_REQUIRES' => {
-    'ExtUtils::MakeMaker' => '6.30'
+  "CONFIGURE_REQUIRES" => {
+    "ExtUtils::MakeMaker" => "6.30"
   },
-  'DISTNAME' => 'App-Cmd',
-  'EXE_FILES' => [],
-  'LICENSE' => 'perl',
-  'NAME' => 'App::Cmd',
-  'PREREQ_PM' => {
-    'Carp' => '0',
-    'Class::Load' => '0.06',
-    'Data::OptList' => '0',
-    'File::Basename' => '0',
-    'Getopt::Long::Descriptive' => '0.084',
-    'IO::TieCombine' => '0',
-    'Module::Pluggable::Object' => '0',
-    'String::RewritePrefix' => '0',
-    'Sub::Exporter' => '0',
-    'Sub::Exporter::Util' => '0',
-    'Sub::Install' => '0',
-    'Text::Abbrev' => '0',
-    'constant' => '0'
+  "DISTNAME" => "App-Cmd",
+  "EXE_FILES" => [],
+  "LICENSE" => "perl",
+  "NAME" => "App::Cmd",
+  "PREREQ_PM" => {
+    "Carp" => 0,
+    "Class::Load" => "0.06",
+    "Data::OptList" => 0,
+    "File::Basename" => 0,
+    "Getopt::Long::Descriptive" => "0.084",
+    "IO::TieCombine" => 0,
+    "Module::Pluggable::Object" => 0,
+    "String::RewritePrefix" => 0,
+    "Sub::Exporter" => 0,
+    "Sub::Exporter::Util" => 0,
+    "Sub::Install" => 0,
+    "Text::Abbrev" => 0,
+    "constant" => 0,
+    "strict" => 0,
+    "warnings" => 0
   },
-  'VERSION' => '0.312',
-  'test' => {
-    'TESTS' => 't/*.t'
+  "VERSION" => "0.313",
+  "test" => {
+    "TESTS" => "t/*.t"
   }
 );
 
