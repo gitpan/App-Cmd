@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Subdispatch::DashedStyle;
 {
-  $App::Cmd::Subdispatch::DashedStyle::VERSION = '0.313';
+  $App::Cmd::Subdispatch::DashedStyle::VERSION = '0.314';
 }
 use App::Cmd::Subdispatch;
 BEGIN { our @ISA = 'App::Cmd::Subdispatch' };
@@ -64,7 +64,7 @@ App::Cmd::Subdispatch::DashedStyle - "app cmd --subcmd" style subdispatching
 
 =head1 VERSION
 
-version 0.313
+version 0.314
 
 =head1 METHODS
 
@@ -90,7 +90,7 @@ Ricardo Signes <rjbs@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Ricardo Signes.
+This software is copyright (c) 2012 by Ricardo Signes.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

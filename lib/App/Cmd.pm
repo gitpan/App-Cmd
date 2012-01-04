@@ -4,7 +4,7 @@ use 5.006;
 
 package App::Cmd;
 {
-  $App::Cmd::VERSION = '0.313';
+  $App::Cmd::VERSION = '0.314';
 }
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
@@ -382,7 +382,7 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.313
+version 0.314
 
 =head1 SYNOPSIS
 
@@ -645,7 +645,7 @@ Ricardo Signes <rjbs@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Ricardo Signes.
+This software is copyright (c) 2012 by Ricardo Signes.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

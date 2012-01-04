@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Command;
 {
-  $App::Cmd::Command::VERSION = '0.313';
+  $App::Cmd::Command::VERSION = '0.314';
 }
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
@@ -103,25 +103,38 @@ sub abstract {
   $class = ref $class if ref $class;
 
   my $result;
+  my $weaver_abstract;
 
+  # classname to filename
   (my $pm_file = $class) =~ s!::!/!g;
   $pm_file .= '.pm';
   $pm_file = $INC{$pm_file};
+
+  # if the pm file exists, open it and parse it
   open my $fh, "<", $pm_file or return "(unknown)";
 
   local $/ = "\n";
   my $inpod;
 
   while (local $_ = <$fh>) {
-    $inpod = /^=cut/ ? !$inpod : $inpod || /^=(?!cut)/; # =cut toggles, it doesn't end :-/
+    # =cut toggles, it doesn't end :-/
+    $inpod = /^=cut/ ? !$inpod : $inpod || /^=(?!cut)/;
+
+    if (/#+\s*ABSTRACT: (.*)/){
+      # takes ABSTRACT: ... if no POD defined yet
+      $weaver_abstract = $1;
+    }
 
     next unless $inpod;
     chomp;
+
     next unless /^(?:$class\s-\s)(.*)/;
+
     $result = $1;
     last;
   }
-  return $result || "(unknown)";
+
+  return $result || $weaver_abstract || "(unknown)";
 }
 
 
@@ -138,7 +151,7 @@ App::Cmd::Command - a base class for App::Cmd commands
 
 =head1 VERSION
 
-version 0.313
+version 0.314
 
 =head1 METHODS
 
@@ -214,8 +227,9 @@ C<validate_args>.
 =head2 abstract
 
 This method returns a short description of the command's purpose.  If this
-method is not overridden, it will return the abstract from the module's POD.
-If it can't find the abstract, it will return the string "(unknown")
+method is not overridden, it will return the abstract from the module's Pod.
+If it can't find the abstract, it will look for a comment starting with
+"ABSTRACT:" like the ones used by L<Pod::Weaver::Section::Name>.
 
 =head2 description
 
@@ -241,7 +255,7 @@ Ricardo Signes <rjbs@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Ricardo Signes.
+This software is copyright (c) 2012 by Ricardo Signes.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
