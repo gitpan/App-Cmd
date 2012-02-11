@@ -39,7 +39,7 @@ requires:
 resources:
   homepage: https://github.com/rjbs/app-cmd
   repository: https://github.com/rjbs/app-cmd.git
-version: 0.315
+version: 0.316
 x_Dist_Zilla:
   plugins:
     -

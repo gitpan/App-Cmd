@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package App::Cmd::Tester::CaptureExternal;
 {
-  $App::Cmd::Tester::CaptureExternal::VERSION = '0.315';
+  $App::Cmd::Tester::CaptureExternal::VERSION = '0.316';
 }
 
 use parent 'App::Cmd::Tester';
@@ -47,7 +47,7 @@ App::Cmd::Tester::CaptureExternal - Extends App::Cmd::Tester to capture from ext
 
 =head1 VERSION
 
-version 0.315
+version 0.316
 
 =head1 SYNOPSIS
 

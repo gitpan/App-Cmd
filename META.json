@@ -60,7 +60,7 @@
          "web" : "https://github.com/rjbs/app-cmd"
       }
    },
-   "version" : "0.315",
+   "version" : "0.316",
    "x_Dist_Zilla" : {
       "plugins" : [
          {
