@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package App::Cmd::Tester;
 {
-  $App::Cmd::Tester::VERSION = '0.316';
+  $App::Cmd::Tester::VERSION = '0.317';
 }
 
 # ABSTRACT: for capturing the result of running an app
@@ -28,6 +28,8 @@ sub result_class { 'App::Cmd::Tester::Result' }
 sub test_app {
   my ($class, $app, $argv) = @_;
 
+  local $App::Cmd::_bad = 0;
+
   $app = $app->new unless ref($app) or $app->isa('App::Cmd::Simple');
 
   my $result = $class->_run_with_capture($app, $argv);
@@ -39,6 +41,8 @@ sub test_app {
   if ($error and eval { $error->isa('App::Cmd::Tester::Exited') }) {
     $exit_code = $$error;
   }
+
+  $exit_code =1 if $App::Cmd::_bad && ! $exit_code;
 
   $class->result_class->new({
     app    => $app,
@@ -79,7 +83,7 @@ sub _run_with_capture {
 {
   package App::Cmd::Tester::Result;
 {
-  $App::Cmd::Tester::Result::VERSION = '0.316';
+  $App::Cmd::Tester::Result::VERSION = '0.317';
 }
 
   sub new {
@@ -98,7 +102,7 @@ sub _run_with_capture {
 {
   package App::Cmd::Tester::Exited;
 {
-  $App::Cmd::Tester::Exited::VERSION = '0.316';
+  $App::Cmd::Tester::Exited::VERSION = '0.317';
 }
   sub throw {
     my ($class, $code) = @_;
@@ -118,7 +122,7 @@ App::Cmd::Tester - for capturing the result of running an app
 
 =head1 VERSION
 
-version 0.316
+version 0.317
 
 =head1 SYNOPSIS
 

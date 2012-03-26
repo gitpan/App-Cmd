@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Command;
 {
-  $App::Cmd::Command::VERSION = '0.316';
+  $App::Cmd::Command::VERSION = '0.317';
 }
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
@@ -151,7 +151,7 @@ App::Cmd::Command - a base class for App::Cmd commands
 
 =head1 VERSION
 
-version 0.316
+version 0.317
 
 =head1 METHODS
 
