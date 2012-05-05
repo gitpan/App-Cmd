@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package App::Cmd::Tester;
 {
-  $App::Cmd::Tester::VERSION = '0.317';
+  $App::Cmd::Tester::VERSION = '0.318';
 }
 
 # ABSTRACT: for capturing the result of running an app
@@ -83,7 +83,7 @@ sub _run_with_capture {
 {
   package App::Cmd::Tester::Result;
 {
-  $App::Cmd::Tester::Result::VERSION = '0.317';
+  $App::Cmd::Tester::Result::VERSION = '0.318';
 }
 
   sub new {
@@ -102,10 +102,11 @@ sub _run_with_capture {
 {
   package App::Cmd::Tester::Exited;
 {
-  $App::Cmd::Tester::Exited::VERSION = '0.317';
+  $App::Cmd::Tester::Exited::VERSION = '0.318';
 }
   sub throw {
     my ($class, $code) = @_;
+    $code = 0 unless defined $code;
     my $self = (bless \$code => $class);
     die $self;
   }
@@ -122,7 +123,7 @@ App::Cmd::Tester - for capturing the result of running an app
 
 =head1 VERSION
 
-version 0.317
+version 0.318
 
 =head1 SYNOPSIS
 

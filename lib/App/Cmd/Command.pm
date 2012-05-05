@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Command;
 {
-  $App::Cmd::Command::VERSION = '0.317';
+  $App::Cmd::Command::VERSION = '0.318';
 }
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
@@ -151,7 +151,7 @@ App::Cmd::Command - a base class for App::Cmd commands
 
 =head1 VERSION
 
-version 0.317
+version 0.318
 
 =head1 METHODS
 
@@ -174,6 +174,15 @@ should use this.
 
 =head2 execute
 
+  $command_plugin->execute(\%opt, \@args);
+
+This method does whatever it is the command should do!  It is passed a hash
+reference of the parsed command-line options and an array reference of left
+over arguments.
+
+If no C<execute> method is defined, it will try to call C<run> -- but it will
+warn about this behavior during testing, to remind you to fix the method name!
+
 =head2 app
 
 This method returns the App::Cmd object into which this command is plugged.
@@ -185,12 +194,16 @@ L<Getopt::Long::Descriptive>).
 
 =head2 command_names
 
-This method returns a list of command names handled by this plugin.  If this
-method is not overridden by a App::Cmd::Command subclass, it will return the
-last part of the plugin's package name, converted to lowercase.
+This method returns a list of command names handled by this plugin. The
+first item returned is the 'canonical' name of the command.
 
+If this method is not overridden by an App::Cmd::Command subclass, it will
+return the last part of the plugin's package name, converted to lowercase.
 For example, YourApp::Cmd::Command::Init will, by default, handle the command
-"init"
+"init".
+
+Subclasses should generally get the superclass value of C<command_names>
+and then append aliases.
 
 =head2 usage_desc
 
@@ -234,20 +247,9 @@ If it can't find the abstract, it will look for a comment starting with
 =head2 description
 
 This method should be overridden to provide full option description. It
-is used by the help command.
+is used by the built-in L<App::Cmd::Command::help|help> command.
 
 If not overridden, it returns an empty string.
-
-=for Pod::Coverage run
-
-  $command_plugin->execute(\%opt, \@args);
-
-This method does whatever it is the command should do!  It is passed a hash
-reference of the parsed command-line options and an array reference of left
-over arguments.
-
-If no C<execute> method is defined, it will try to call C<run> -- but it will
-warn about this behavior during testing, to remind you to fix the method name!
 
 =head1 AUTHOR
 

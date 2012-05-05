@@ -13,7 +13,7 @@ App::Cmd::Tutorial - getting started with App::Cmd
 
 =head1 VERSION
 
-version 0.317
+version 0.318
 
 =head1 DESCRIPTION
 
@@ -140,12 +140,27 @@ To add a C<--help> option to all your commands create a base class like:
 
   sub validate_args {
     my ( $self, $opt, $args ) = @_;
-    die $self->_usage_text if $opt->{help};
+    if ( $opt->{help} ) {
+      my ($command) = $self->command_names;
+      $self->app->execute_command(
+        $self->app->prepare_command("help", $command)
+      );
+      exit;
+    }
     $self->validate( $opt, $args );
   }
 
 Where C<options> and C<validate> are "inner" methods which your command
-subclasses implement.
+subclasses implement to provide command-specific options and validation.
+
+=item *
+
+Add a C<description> method to your commands for more verbose output
+from the built-in C<App::Cmd::Command::help|help> command.
+
+  sub description {
+    return "The initialize command prepares ...";
+  }
 
 =item *
 
