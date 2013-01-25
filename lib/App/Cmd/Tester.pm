@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package App::Cmd::Tester;
 {
-  $App::Cmd::Tester::VERSION = '0.318';
+  $App::Cmd::Tester::VERSION = '0.319';
 }
 
 # ABSTRACT: for capturing the result of running an app
@@ -83,7 +83,7 @@ sub _run_with_capture {
 {
   package App::Cmd::Tester::Result;
 {
-  $App::Cmd::Tester::Result::VERSION = '0.318';
+  $App::Cmd::Tester::Result::VERSION = '0.319';
 }
 
   sub new {
@@ -102,7 +102,7 @@ sub _run_with_capture {
 {
   package App::Cmd::Tester::Exited;
 {
-  $App::Cmd::Tester::Exited::VERSION = '0.318';
+  $App::Cmd::Tester::Exited::VERSION = '0.319';
 }
   sub throw {
     my ($class, $code) = @_;
@@ -115,6 +115,7 @@ sub _run_with_capture {
 1;
 
 __END__
+
 =pod
 
 =head1 NAME
@@ -123,7 +124,7 @@ App::Cmd::Tester - for capturing the result of running an app
 
 =head1 VERSION
 
-version 0.318
+version 0.319
 
 =head1 SYNOPSIS
 
@@ -185,10 +186,9 @@ Ricardo Signes <rjbs@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Ricardo Signes.
+This software is copyright (c) 2013 by Ricardo Signes.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

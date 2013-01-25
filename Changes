@@ -1,5 +1,12 @@
 Revision history for App-Cmd
 
+0.319     2013-01-25 18:18:21 America/New_York
+          Enable --help option for App::Cmd::Simple (thanks, Ryan Thompson!)
+
+          add the ability to ignore non-commands (Thanks, Kent Fredric!)
+
+          many improvements to tutorial (thanks, mokko!)
+
 0.318     2012-05-04 22:00:34 America/New_York
           App::Cmd::Tester treats undef code as 0 now (thanks, David Golden)
 

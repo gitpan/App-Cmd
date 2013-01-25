@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Subdispatch;
 {
-  $App::Cmd::Subdispatch::VERSION = '0.318';
+  $App::Cmd::Subdispatch::VERSION = '0.319';
 }
 
 use App::Cmd;
@@ -70,6 +70,7 @@ sub choose_parent_app {
 1;
 
 __END__
+
 =pod
 
 =head1 NAME
@@ -78,7 +79,7 @@ App::Cmd::Subdispatch - an App::Cmd::Command that is also an App::Cmd
 
 =head1 VERSION
 
-version 0.318
+version 0.319
 
 =head1 METHODS
 
@@ -116,10 +117,9 @@ Ricardo Signes <rjbs@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Ricardo Signes.
+This software is copyright (c) 2013 by Ricardo Signes.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
