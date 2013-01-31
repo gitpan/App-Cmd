@@ -4,7 +4,7 @@ use 5.006;
 
 package App::Cmd;
 {
-  $App::Cmd::VERSION = '0.319';
+  $App::Cmd::VERSION = '0.320';
 }
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
@@ -264,7 +264,7 @@ sub _bad_command {
   # This should be class data so that, in Bizarro World, two App::Cmds will not
   # conflict.
   our $_bad++;
-  $self->prepare_command("commands");
+  $self->prepare_command(qw(commands --stderr));
 }
 
 END { exit 1 if our $_bad };
@@ -422,7 +422,7 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.319
+version 0.320
 
 =head1 SYNOPSIS
 

@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Subdispatch::DashedStyle;
 {
-  $App::Cmd::Subdispatch::DashedStyle::VERSION = '0.319';
+  $App::Cmd::Subdispatch::DashedStyle::VERSION = '0.320';
 }
 use App::Cmd::Subdispatch;
 BEGIN { our @ISA = 'App::Cmd::Subdispatch' };
@@ -65,7 +65,7 @@ App::Cmd::Subdispatch::DashedStyle - "app cmd --subcmd" style subdispatching
 
 =head1 VERSION
 
-version 0.319
+version 0.320
 
 =head1 METHODS
 

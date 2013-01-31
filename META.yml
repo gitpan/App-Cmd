@@ -39,25 +39,26 @@ requires:
   strict: 0
   warnings: 0
 resources:
+  bugtracker: https://github.com/rjbs/app-cmd/issues
   homepage: https://github.com/rjbs/app-cmd
   repository: https://github.com/rjbs/app-cmd.git
-version: 0.319
+version: 0.320
 x_Dist_Zilla:
   perl:
-    version: 5.017007
+    version: 5.017008
   plugins:
     -
       class: Dist::Zilla::Plugin::Git::GatherDir
       name: '@RJBS/Git::GatherDir'
-      version: 2.005
+      version: 2.007
     -
       class: Dist::Zilla::Plugin::CheckPrereqsIndexed
       name: '@RJBS/CheckPrereqsIndexed'
-      version: 0.007
+      version: 0.008
     -
       class: Dist::Zilla::Plugin::CheckExtraTests
       name: '@RJBS/CheckExtraTests'
-      version: 0.007
+      version: 0.008
     -
       class: Dist::Zilla::Plugin::PruneCruft
       name: '@RJBS/@Filter/PruneCruft'
@@ -113,7 +114,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::Git::NextVersion
       name: '@RJBS/Git::NextVersion'
-      version: 2.005
+      version: 2.007
     -
       class: Dist::Zilla::Plugin::PkgVersion
       name: '@RJBS/PkgVersion'
@@ -165,19 +166,19 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::Git::Check
       name: '@RJBS/@Git/Check'
-      version: 2.005
+      version: 2.007
     -
       class: Dist::Zilla::Plugin::Git::Commit
       name: '@RJBS/@Git/Commit'
-      version: 2.005
+      version: 2.007
     -
       class: Dist::Zilla::Plugin::Git::Tag
       name: '@RJBS/@Git/Tag'
-      version: 2.005
+      version: 2.007
     -
       class: Dist::Zilla::Plugin::Git::Push
       name: '@RJBS/@Git/Push'
-      version: 2.005
+      version: 2.007
     -
       class: Dist::Zilla::Plugin::Prereqs
       config:

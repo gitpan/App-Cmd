@@ -24,6 +24,7 @@ t/00-load.t
 t/000-report-versions-tiny.t
 t/abbrev.t
 t/basic.t
+t/callback.t
 t/capture-ext.t
 t/lib/Test/BrokenCmd.pm
 t/lib/Test/BrokenCmd/Command.pm
@@ -46,11 +47,14 @@ t/lib/Test/MySimple.pm
 t/lib/Test/WSNCC.pm
 t/lib/Test/WSNCC/Command/blort.pm
 t/lib/Test/WSOF.pm
+t/lib/Test/WithCallback.pm
+t/lib/Test/WithCallback/Command/lol.pm
 t/lib/Test/WithSetup.pm
 t/lib/Test/WithSetup/Command.pm
 t/lib/Test/WithSetup/Command/alfie.pm
 t/lib/Test/WithSetup/Command/bertie.pm
 t/lib/Test/XyzzyPlugin.pm
+t/lib/lol.pl
 t/setup-broken.t
 t/setup-ignored.t
 t/setup-inner.t
@@ -61,6 +65,4 @@ t/simple-require.t
 t/simple-use.t
 t/subdispatch.t
 xt/release/changes_has_content.t
-xt/release/pod-coverage.t
 xt/release/pod-syntax.t
-xt/release/pod.t

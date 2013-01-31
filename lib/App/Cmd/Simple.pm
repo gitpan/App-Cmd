@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Simple;
 {
-  $App::Cmd::Simple::VERSION = '0.319';
+  $App::Cmd::Simple::VERSION = '0.320';
 }
 use App::Cmd::Command;
 BEGIN { our @ISA = 'App::Cmd::Command' }
@@ -122,7 +122,7 @@ App::Cmd::Simple - a helper for building one-command App::Cmd applications
 
 =head1 VERSION
 
-version 0.319
+version 0.320
 
 =head1 SYNOPSIS
 
