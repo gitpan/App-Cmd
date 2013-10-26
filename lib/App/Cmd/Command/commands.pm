@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Command::commands;
 {
-  $App::Cmd::Command::commands::VERSION = '0.320';
+  $App::Cmd::Command::commands::VERSION = '0.321';
 }
 use App::Cmd::Command;
 BEGIN { our @ISA = 'App::Cmd::Command' };
@@ -22,6 +22,7 @@ sub execute {
   print { $target } "Available commands:\n\n";
 
   my @primary_commands =
+    grep { $_ ne 'version' }
     map { ($_->command_names)[0] }
     $self->app->command_plugins;
 
@@ -75,7 +76,7 @@ App::Cmd::Command::commands - list the application's commands
 
 =head1 VERSION
 
-version 0.320
+version 0.321
 
 =head1 DESCRIPTION
 

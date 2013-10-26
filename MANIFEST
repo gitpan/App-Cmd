@@ -11,6 +11,7 @@ lib/App/Cmd/ArgProcessor.pm
 lib/App/Cmd/Command.pm
 lib/App/Cmd/Command/commands.pm
 lib/App/Cmd/Command/help.pm
+lib/App/Cmd/Command/version.pm
 lib/App/Cmd/Plugin.pm
 lib/App/Cmd/Setup.pm
 lib/App/Cmd/Simple.pm
@@ -19,7 +20,6 @@ lib/App/Cmd/Subdispatch/DashedStyle.pm
 lib/App/Cmd/Tester.pm
 lib/App/Cmd/Tester/CaptureExternal.pm
 lib/App/Cmd/Tutorial.pod
-t/00-compile.t
 t/00-load.t
 t/000-report-versions-tiny.t
 t/abbrev.t

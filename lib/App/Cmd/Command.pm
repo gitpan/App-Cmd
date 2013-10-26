@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Command;
 {
-  $App::Cmd::Command::VERSION = '0.320';
+  $App::Cmd::Command::VERSION = '0.321';
 }
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
@@ -152,7 +152,7 @@ App::Cmd::Command - a base class for App::Cmd commands
 
 =head1 VERSION
 
-version 0.320
+version 0.321
 
 =head1 METHODS
 
@@ -248,7 +248,7 @@ If it can't find the abstract, it will look for a comment starting with
 =head2 description
 
 This method should be overridden to provide full option description. It
-is used by the built-in L<App::Cmd::Command::help|help> command.
+is used by the built-in L<help|App::Cmd::Command::help> command.
 
 If not overridden, it returns an empty string.
 

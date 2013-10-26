@@ -14,7 +14,7 @@ App::Cmd::Tutorial - getting started with App::Cmd
 
 =head1 VERSION
 
-version 0.320
+version 0.321
 
 =head1 DESCRIPTION
 
@@ -103,7 +103,7 @@ section.
 
 =item help
 
-allows to query for details on command's specifics.
+allows one to query for details on command's specifics.
 
   $yourcmd help initialize
    yourcmd initialize [-z] [long options...]
@@ -213,7 +213,7 @@ all of them.
 =item *
 
 Add a C<description> method to your commands for more verbose output
-from the built-in C<App::Cmd::Command::help|help> command.
+from the built-in L<help|App::Cmd::Command::help> command.
 
   sub description {
     return "The initialize command prepares ...";
@@ -291,10 +291,10 @@ This is the simplest approach, and most useful for one-offs.
 
   <whatever you want here>
 
-This will register this packages namespace with YourApp to be excluded from its
-plugin validation magic. It otherwise makes no changes to C<::NotACommand>'s
-namespace, does nothing magical with C<@ISA>, and doesn't bolt any hidden
-functions on.
+This will register this package's namespace with YourApp to be excluded from
+its plugin validation magic. It otherwise makes no changes to
+C<::NotACommand>'s namespace, does nothing magical with C<@ISA>, and doesn't
+bolt any hidden functions on.
 
 Its also probably good to notice that it is ignored I<only> by
 C<YourApp>. If for whatever reason you have two different C<App::Cmd> systems
@@ -335,8 +335,7 @@ C<around> method modifier.
 
 =head1 SEE ALSO
 
-L<CPAN modules using App::Cmd|
-http://deps.cpantesters.org/depended-on-by.pl?module=App%3A%3ACmd>
+L<CPAN modules using App::Cmd|http://deps.cpantesters.org/depended-on-by.pl?module=App%3A%3ACmd>
 
 =head1 AUTHOR
 

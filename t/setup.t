@@ -16,7 +16,7 @@ my $app = $CLASS->new;
 
 is_deeply(
   [ sort $app->command_names ],
-  [ sort qw(help --help -h -? commands alfie bertie) ],
+  [ sort qw(help --help -h --version -? commands alfie bertie version) ],
   "got correct list of registered command names",
 );
 
@@ -25,6 +25,7 @@ is_deeply(
   [ qw(
     App::Cmd::Command::commands
     App::Cmd::Command::help
+    App::Cmd::Command::version
     Test::WithSetup::Command::alfie
     Test::WithSetup::Command::bertie
   ) ],
@@ -34,7 +35,7 @@ is_deeply(
 {
   local @ARGV = qw(alfie);
   my $return = eval { $app->run };
-  
+
   is_deeply(
     $return,
     {},
@@ -45,7 +46,7 @@ is_deeply(
 {
   local @ARGV = qw(bertie);
   my $return = eval { $app->run };
-  
+
   is($return->[0], 'Test::XyzzyPlugin', "arg0 = plugin itself");
 
   isa_ok($return->[1], 'Test::WithSetup::Command');
