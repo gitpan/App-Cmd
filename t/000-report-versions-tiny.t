@@ -55,6 +55,7 @@ eval { $v .= pmver('Data::Dumper','any version') };
 eval { $v .= pmver('Data::OptList','any version') };
 eval { $v .= pmver('ExtUtils::MakeMaker','6.30') };
 eval { $v .= pmver('File::Basename','any version') };
+eval { $v .= pmver('Getopt::Long','2.39') };
 eval { $v .= pmver('Getopt::Long::Descriptive','0.084') };
 eval { $v .= pmver('IO::TieCombine','any version') };
 eval { $v .= pmver('IPC::Cmd','any version') };

@@ -24,6 +24,7 @@ requires:
   Class::Load: 0.06
   Data::OptList: 0
   File::Basename: 0
+  Getopt::Long: 2.39
   Getopt::Long::Descriptive: 0.084
   IO::TieCombine: 0
   Module::Pluggable::Object: 0
@@ -41,15 +42,15 @@ resources:
   bugtracker: https://github.com/rjbs/App-Cmd/issues
   homepage: https://github.com/rjbs/App-Cmd
   repository: https://github.com/rjbs/App-Cmd.git
-version: 0.321
+version: 0.322
 x_Dist_Zilla:
   perl:
-    version: 5.019004
+    version: 5.019005
   plugins:
     -
       class: Dist::Zilla::Plugin::Git::GatherDir
       name: '@RJBS/Git::GatherDir'
-      version: 2.016
+      version: 2.017
     -
       class: Dist::Zilla::Plugin::CheckPrereqsIndexed
       name: '@RJBS/CheckPrereqsIndexed'
@@ -121,7 +122,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::Git::NextVersion
       name: '@RJBS/Git::NextVersion'
-      version: 2.016
+      version: 2.017
     -
       class: Dist::Zilla::Plugin::PkgVersion
       name: '@RJBS/PkgVersion'
@@ -175,19 +176,19 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::Git::Check
       name: '@RJBS/@Git/Check'
-      version: 2.016
+      version: 2.017
     -
       class: Dist::Zilla::Plugin::Git::Commit
       name: '@RJBS/@Git/Commit'
-      version: 2.016
+      version: 2.017
     -
       class: Dist::Zilla::Plugin::Git::Tag
       name: '@RJBS/@Git/Tag'
-      version: 2.016
+      version: 2.017
     -
       class: Dist::Zilla::Plugin::Git::Push
       name: '@RJBS/@Git/Push'
-      version: 2.016
+      version: 2.017
     -
       class: Dist::Zilla::Plugin::Prereqs
       config:

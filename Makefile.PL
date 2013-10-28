@@ -25,6 +25,7 @@ my %WriteMakefileArgs = (
     "Class::Load" => "0.06",
     "Data::OptList" => 0,
     "File::Basename" => 0,
+    "Getopt::Long" => "2.39",
     "Getopt::Long::Descriptive" => "0.084",
     "IO::TieCombine" => 0,
     "Module::Pluggable::Object" => 0,
@@ -46,7 +47,7 @@ my %WriteMakefileArgs = (
     "base" => 0,
     "lib" => 0
   },
-  "VERSION" => "0.321",
+  "VERSION" => "0.322",
   "test" => {
     "TESTS" => "t/*.t"
   }

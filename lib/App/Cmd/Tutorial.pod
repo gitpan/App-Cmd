@@ -14,7 +14,7 @@ App::Cmd::Tutorial - getting started with App::Cmd
 
 =head1 VERSION
 
-version 0.321
+version 0.322
 
 =head1 DESCRIPTION
 
