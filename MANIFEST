@@ -60,6 +60,7 @@ t/setup-ignored.t
 t/setup-inner.t
 t/setup-nocmd.t
 t/setup.t
+t/simple-args.t
 t/simple-help.t
 t/simple-require.t
 t/simple-use.t

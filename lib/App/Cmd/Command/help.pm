@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Command::help;
 {
-  $App::Cmd::Command::help::VERSION = '0.322';
+  $App::Cmd::Command::help::VERSION = '0.323';
 }
 use App::Cmd::Command;
 BEGIN { our @ISA = 'App::Cmd::Command'; }
@@ -62,13 +62,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 App::Cmd::Command::help - display a command's help screen
 
 =head1 VERSION
 
-version 0.322
+version 0.323
 
 =head1 DESCRIPTION
 
@@ -103,7 +105,7 @@ you will only need to override it to provide additional command line
 usage information.
 
 The C<opt_spec> data structure is used with L<Getopt::Long::Descriptive>
-to generate the description of the optons.
+to generate the description of the options.
 
 Subcommand classes should override the C<discription> method to provide
 additional information that is prepended before the option descriptions.

@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Command;
 {
-  $App::Cmd::Command::VERSION = '0.322';
+  $App::Cmd::Command::VERSION = '0.323';
 }
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
@@ -108,7 +108,7 @@ sub abstract {
   # classname to filename
   (my $pm_file = $class) =~ s!::!/!g;
   $pm_file .= '.pm';
-  $pm_file = $INC{$pm_file};
+  $pm_file = $INC{$pm_file} or return "(unknown)";
 
   # if the pm file exists, open it and parse it
   open my $fh, "<", $pm_file or return "(unknown)";
@@ -146,13 +146,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 App::Cmd::Command - a base class for App::Cmd commands
 
 =head1 VERSION
 
-version 0.322
+version 0.323
 
 =head1 METHODS
 

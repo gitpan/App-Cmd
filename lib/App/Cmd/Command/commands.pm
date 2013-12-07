@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Command::commands;
 {
-  $App::Cmd::Command::commands::VERSION = '0.322';
+  $App::Cmd::Command::commands::VERSION = '0.323';
 }
 use App::Cmd::Command;
 BEGIN { our @ISA = 'App::Cmd::Command' };
@@ -70,13 +70,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 App::Cmd::Command::commands - list the application's commands
 
 =head1 VERSION
 
-version 0.322
+version 0.323
 
 =head1 DESCRIPTION
 

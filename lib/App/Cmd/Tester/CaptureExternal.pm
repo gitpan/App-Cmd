@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package App::Cmd::Tester::CaptureExternal;
 {
-  $App::Cmd::Tester::CaptureExternal::VERSION = '0.322';
+  $App::Cmd::Tester::CaptureExternal::VERSION = '0.323';
 }
 
 use parent 'App::Cmd::Tester';
@@ -42,13 +42,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 App::Cmd::Tester::CaptureExternal - Extends App::Cmd::Tester to capture from external subprograms
 
 =head1 VERSION
 
-version 0.322
+version 0.323
 
 =head1 SYNOPSIS
 

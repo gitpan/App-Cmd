@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::ArgProcessor;
 {
-  $App::Cmd::ArgProcessor::VERSION = '0.322';
+  $App::Cmd::ArgProcessor::VERSION = '0.323';
 }
 # ABSTRACT: App::Cmd-specific wrapper for Getopt::Long::Descriptive
 
@@ -29,13 +29,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 App::Cmd::ArgProcessor - App::Cmd-specific wrapper for Getopt::Long::Descriptive
 
 =head1 VERSION
 
-version 0.322
+version 0.323
 
 =head1 AUTHOR
 

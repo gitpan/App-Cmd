@@ -1,5 +1,9 @@
 Revision history for App-Cmd
 
+0.323     2013-12-07 08:46:51 America/New_York
+          fall back to "(unknown)" for command abstract in more cases (thanks,
+          Jakob Voss!)
+
 0.322     2013-10-28 08:00:35 America/New_York
           require a newer Getopt::Long to avoid --version conflicts
 

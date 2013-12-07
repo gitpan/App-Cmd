@@ -3,7 +3,7 @@ use warnings;
 
 package App::Cmd::Command::version;
 {
-  $App::Cmd::Command::version::VERSION = '0.322';
+  $App::Cmd::Command::version::VERSION = '0.323';
 }
 use App::Cmd::Command;
 BEGIN { our @ISA = 'App::Cmd::Command'; }
@@ -35,13 +35,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 App::Cmd::Command::version - display an app's version
 
 =head1 VERSION
 
-version 0.322
+version 0.323
 
 =head1 DESCRIPTION
 
