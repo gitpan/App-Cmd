@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 package App::Cmd::Subdispatch;
-$App::Cmd::Subdispatch::VERSION = '0.324';
+$App::Cmd::Subdispatch::VERSION = '0.325';
 use App::Cmd;
 use App::Cmd::Command;
 BEGIN { our @ISA = qw(App::Cmd::Command App::Cmd) } 
@@ -110,7 +110,7 @@ App::Cmd::Subdispatch - an App::Cmd::Command that is also an App::Cmd
 
 =head1 VERSION
 
-version 0.324
+version 0.325
 
 =head1 METHODS
 

@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 package App::Cmd::Plugin;
-$App::Cmd::Plugin::VERSION = '0.324';
+$App::Cmd::Plugin::VERSION = '0.325';
 # ABSTRACT: a plugin for App::Cmd commands
 
 sub _faux_curried_method {
@@ -27,7 +27,7 @@ App::Cmd::Plugin - a plugin for App::Cmd commands
 
 =head1 VERSION
 
-version 0.324
+version 0.325
 
 =head1 AUTHOR
 

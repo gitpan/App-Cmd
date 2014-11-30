@@ -3,7 +3,7 @@ use warnings;
 use 5.006;
 
 package App::Cmd;
-$App::Cmd::VERSION = '0.324';
+$App::Cmd::VERSION = '0.325';
 use App::Cmd::ArgProcessor;
 BEGIN { our @ISA = 'App::Cmd::ArgProcessor' };
 # ABSTRACT: write command line apps with less suffering
@@ -691,7 +691,7 @@ App::Cmd - write command line apps with less suffering
 
 =head1 VERSION
 
-version 0.324
+version 0.325
 
 =head1 SYNOPSIS
 
