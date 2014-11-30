@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 
-use File::Spec;
 use Test::More tests => 15;
 use App::Cmd::Tester;
 
@@ -68,11 +67,12 @@ is_deeply(
 }
 
 my $return = test_app('Test::MyCmd', [ qw(--version) ]);
-my $version_expect = sprintf(
-    "basic.t (Test::MyCmd) version 0.123 (%s)\n",
-    File::Spec->catfile(t => 'basic.t'),
+
+like(
+  $return->stdout,
+  qr{\Abasic\.t \(Test::MyCmd\) version 0\.123 \(t[\\/]basic\.t\)\Z},
+  "version plugin enabled"
 );
-is($return->stdout, $version_expect, "version plugin enabled");
 
 $return = test_app('Test::MyCmd', [ qw(commands) ]);
 
